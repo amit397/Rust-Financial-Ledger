@@ -15,3 +15,4 @@ Again just as a disclaimer, the point of this is not to create a crazy good AI a
 * Create a simple AI agent that takes plain english transfers between accounts ("transfer $50 from Checking to Savings") and adds them to a ledger
 * Build a fast ledger that can process previous transactions to enforce rules
 * The ledger catches all of the AI agents mistakes (unbalanced entries, insufficient funds, nonexistent accounts, overflow)
+* All these tests are converted to digestable metrics that make it easy to understand and use
