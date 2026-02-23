@@ -1,15 +1,45 @@
 [package]
-name = "rust-financial-ledger"
+name = "ledger-guard"
 version = "0.1.0"
 edition = "2021"
+description = "A type-safe Rust financial ledger that catches every AI agent mistake"
+readme = "README.md"
+
+# ─── Binary + Library ───────────────────────────────────────────────
+# The library crate (`src/lib.rs`) exposes all core modules for testing.
+# The binary crate (`src/main.rs`) is the CLI entry point.
+[[bin]]
+name = "ledger-guard"
+path = "src/main.rs"
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+name = "ledger_guard"
+path = "src/lib.rs"
 
+# ─── Runtime Dependencies ───────────────────────────────────────────
 [dependencies]
-wasm-bindgen = "0.2"
+# Serialization framework — `derive` feature auto-generates Serialize/Deserialize impls
 serde = { version = "1.0", features = ["derive"] }
-serde-wasm-bindgen = "0.4"
-getrandom = { version = "0.2", features = ["js"] }
-js-sys = "0.3"
-web-sys = { version = "0.3", features = ["console"] }
+
+# JSON serialization/deserialization for persistence and agent proposal parsing
+serde_json = "1.0"
+
+# Ergonomic error types — lets us derive Display + Error with #[error("...")]
+thiserror = "2.0"
+
+# Date/time — used for ISO-8601 timestamps on transactions
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID generation — every transaction gets a unique identifier
+uuid = { version = "1.0", features = ["v4"] }
+
+# Readline-style interactive CLI with history and line editing
+rustyline = "15.0"
+
+# Regex — used by the mock agent to parse natural language patterns
+regex = "1.0"
+
+# ─── Dev / Test Dependencies ────────────────────────────────────────
+[dev-dependencies]
+# Provides temporary directories that auto-cleanup — used in persistence tests
+tempfile = "3.0"
