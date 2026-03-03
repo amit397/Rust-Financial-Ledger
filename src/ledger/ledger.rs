@@ -229,7 +229,12 @@ impl Ledger {
             // have enough funds to cover this debit. Note: we check
             // `new_balance < 0`, not `entry.amount < 0`, because a
             // credit could still push a negative pending balance positive.
-            if new_balance < 0 {
+            //
+            // EXCEPTION: The "External" account represents money flowing
+            // in/out of the system (the outside world). It's allowed to
+            // go negative because deposits pull money "from" External,
+            // and it would be impossible to fund accounts otherwise.
+            if new_balance < 0 && entry.account_id != "External" {
                 return Err(LedgerError::InsufficientFunds {
                     account: entry.account_id.clone(),
                     available: current_balance,
