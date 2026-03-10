@@ -149,68 +149,91 @@ The agent module handles not just logical errors but operational failures:
 
 ---
 
-## Timeline (10 Weeks, Part-Time)
+## Timeline (12 Weeks, Part-Time)
 
 ### Pre-Work (Before Week 1)
 - [ ] **2-hour spike:** Test `mistralrs` and `llama.cpp` with smallest available model
 - [ ] **Commit to LLM backend** and document decision
 
-### Week 1–2: Ledger Core
-- [ ] `Account`, `Entry`, `Transaction`, `Ledger` structs
-- [ ] `LedgerError` enum: `InsufficientFunds`, `Unbalanced`, `AccountNotFound`, `Overflow`, `InvalidAmount`
-- [ ] `Transaction::new(entries) → Result<Transaction, LedgerError>` with `checked_add`/`checked_sub`
-- [ ] Event log (`Vec<Transaction>`) + balance cache (`HashMap<AccountId, i64>`)
-- [ ] File persistence: serialize/deserialize event log with `serde_json` (atomic write via temp file → rename)
-- [ ] 100% unit test coverage of all invariant checks and error paths
+### Week 1–2: Ledger Core ✅ COMPLETE
+- [x] `Account`, `Entry`, `Transaction`, `Ledger` structs
+- [x] `LedgerError` enum: `InsufficientFunds`, `Unbalanced`, `AccountNotFound`, `Overflow`, `InvalidAmount`
+- [x] `Transaction::new(entries) → Result<Transaction, LedgerError>` with `checked_add`/`checked_sub`
+- [x] Event log (`Vec<Transaction>`) + balance cache (`HashMap<AccountId, i64>`)
+- [x] File persistence: serialize/deserialize event log with `serde_json` (atomic write via temp file → rename)
+- [x] 100% unit test coverage of all invariant checks and error paths (48 unit tests, 7 doc tests)
 - [ ] Property-based tests with `proptest`: random valid entry sets → apply → replay → assert identical balances
 - [ ] Replay benchmark: target < 100ms for 100k events
 
-### Week 3: LLM Integration (Raw Inference)
+### Week 3–4: Concurrent Chaos Agents ← NEW PHASE
+
+> **Full specification:** See [CONCURRENT_AGENTS.md](file:///c:/Users/User/Desktop/Rust-Financial-Ledger/CONCURRENT_AGENTS.md)
+
+This phase is inserted **before** LLM integration because it:
+1. Proves the ledger's safety code works under concurrent load — the strongest possible validation
+2. Produces impressive quantifiable metrics (throughput, rejection rates, invariant proofs)
+3. Justifies Rust with compile-time concurrency guarantees
+4. Requires zero changes to the ledger module or the Agent trait
+
+- [ ] Add `rand = "0.9"` and `ctrlc = "3.4"` to `Cargo.toml`
+- [ ] Implement 6 chaos agents in `src/agent/chaos.rs` with unit tests
+- [ ] Implement `MetricsCollector` with lock-free atomics + reservoir sampling in `src/stress/metrics.rs`
+- [ ] Implement `StressTest` orchestrator with `catch_unwind` + poison recovery in `src/stress/mod.rs`
+- [ ] Implement `ctrlc` handler for graceful Ctrl+C shutdown
+- [ ] Implement report printer + 4-check invariant verification in `src/stress/report.rs`
+- [ ] Wire `--stress`, `--agents`, `--duration` flags into `main.rs` + update `--help`
+- [ ] Write integration test in `tests/stress_test.rs`
+- [ ] Run full stress test: `cargo run --release -- --stress`
+- [ ] Verify all 48+ existing tests still pass: `cargo test`
+
+### Week 5: LLM Integration (Raw Inference)
 - [ ] Integrate chosen backend; get raw text output from model
 - [ ] Implement 30-second inference timeout
 - [ ] Implement crash recovery (graceful error on model failure)
 - [ ] Validate: can call model and get *any* text response reliably
 
-### Week 4: Prompt Engineering & Structured Output
+### Week 6: Prompt Engineering & Structured Output
 - [ ] Define JSON function schema for `create_transaction`
 - [ ] Write prompt with 5 few-shot examples of valid/invalid transactions
 - [ ] Implement JSON parsing with `serde_json` + silent retry (up to 2x)
 - [ ] Implement `Agent::generate_transaction(query: &str) → Result<Transaction, AgentError>`
 - [ ] Validate: ≥90% parse rate on 50-query mini-corpus
 
-### Week 5: CLI REPL
-- [ ] `rustyline` REPL with commands: natural language input, `balance <account>`, `history`, `quit`
-- [ ] `--mock` mode: deterministic rule-based agent that produces proposals through the **same validation pipeline** as the real LLM (ledger treats both as untrusted)
-- [ ] Display agent proposals → ledger verdict (✅ / ❌ with structured error)
-- [ ] Graceful handling of all operational errors (timeout, panic, parse failure)
-- [ ] Manual testing of full pipeline end-to-end
+### Week 7: CLI REPL ✅ COMPLETE
+- [x] `rustyline` REPL with commands: natural language input, `balance <account>`, `history`, `quit`
+- [x] `--mock` mode: deterministic rule-based agent that produces proposals through the **same validation pipeline** as the real LLM (ledger treats both as untrusted)
+- [x] Display agent proposals → ledger verdict (✅ / ❌ with structured error)
+- [x] Graceful handling of all operational errors (timeout, panic, parse failure)
+- [x] Manual testing of full pipeline end-to-end
 
-### Week 6: Benchmark Corpus & Evaluation
+### Week 8: Benchmark Corpus & Evaluation
 - [ ] Generate 200+ queries: 100 templated, 50 paraphrased, 50 adversarial
 - [ ] Run agent against full corpus; record per-category accuracy, P50/P95 latency, rejection rates
 - [ ] Publish raw results, generation script, and evaluation script in `benches/`
 
-### Week 7: Fuzzing & Edge Cases
+### Week 9: Fuzzing & Edge Cases
 - [ ] `cargo fuzz` target for JSON → `Transaction::new` path
 - [ ] Run fuzzer for ≥1 hour; fix all panics
 - [ ] Add CI fuzz job (short run per push, long run weekly)
 - [ ] Fix any edge cases discovered during corpus evaluation
 
-### Week 8: Documentation & README
+### Week 10: Documentation & README
 - [ ] Record 1-minute GIF of CLI demo (success → failure → error message)
-- [ ] Architecture diagram in README
+- [ ] Record 1-minute GIF of stress test demo (agents running → report output)
+- [ ] Architecture diagram in README (including concurrent agent layer)
 - [ ] Per-category accuracy/latency table
 - [ ] "Safety Boundary" section: where compile-time guarantees end, where runtime checks begin
+- [ ] Stress test metrics section in README with sample output
 - [ ] Model download instructions / setup script
 - [ ] GitHub Actions CI: `cargo check`, `cargo test`, `cargo clippy`, `cargo bench`
 
-### Week 9: LLM Stabilization & Polish
+### Week 11: LLM Stabilization & Polish
 - [ ] Improve parse rate if below target
 - [ ] Extend corpus to 300 queries if time permits
-- [ ] Record 3-minute demo video with voiceover
+- [ ] Record 3-minute demo video with voiceover (include stress test showcase)
 - [ ] Write blog post (optional, secondary to README)
 
-### Week 10: Buffer
+### Week 12: Buffer
 - [ ] Only if needed. If on track, **ship early.**
 
 ---
@@ -220,9 +243,12 @@ The agent module handles not just logical errors but operational failures:
 1. **`cargo test` passes** with 100% coverage of all invariant checks (balanced entries, sufficient funds, account existence, overflow). Property-based tests verify replay consistency.
 2. **Benchmark corpus** of ≥200 queries exists in `benches/` with per-category results **published** (exact accuracy and P50/P95 latency — numbers are reported honestly, not pass/fail). Ledger accept/reject rates are 100%.
 3. **`cargo fuzz` runs** for ≥1 hour with zero panics.
-4. **First-run experience works two ways:** (a) Full mode: clone → setup script downloads model → `cargo run --release` → interact. (b) Mock mode: clone → `cargo run -- --mock` → interact with rule-based agent. Both under 2 minutes.
-5. **README contains:** GIF demo, architecture diagram, per-category accuracy/latency table, safety boundary explanation, system requirements, honest limitations, and documented model crash behaviour.
+4. **First-run experience works three ways:** (a) Full mode: clone → setup script downloads model → `cargo run --release` → interact. (b) Mock mode: clone → `cargo run -- --mock` → interact with rule-based agent. (c) Stress mode: clone → `cargo run --release -- --stress` → see metrics report. All under 2 minutes.
+5. **README contains:** GIF demo, stress test demo, architecture diagram, per-category accuracy/latency table, safety boundary explanation, system requirements, honest limitations, and documented model crash behaviour.
 6. **Persistence is atomic:** event log written via temp file → rename. No corruption on crash.
+7. **Stress test passes all invariant checks:** non-negative balances (except External), conservation of money (sum = 0), transaction count consistency, and replay consistency — all verified automatically after every stress run.
+8. **Zero changes to `src/ledger/`:** The concurrent stress test must prove the existing ledger safety code is correct under multi-threaded load without modifying it. The `Agent` trait in `src/agent/mod.rs` must also remain unchanged.
+9. **Graceful shutdown:** Ctrl+C during a stress test must produce a complete metrics report from the partial run, not crash with no output.
 
 ---
 
@@ -291,3 +317,22 @@ Subprocess isolation was considered but rejected as scope creep. Documenting the
 Agent accuracy targets (e.g., "≥90% parse rate") were removed from the Done Criteria. If the model achieves 72%, that's the number that gets published. The project's value comes from the ledger catching every failure, not from the agent being perfect.
 
 This honesty is a deliberate signal: real systems engineering means measuring and publishing, not cherry-picking numbers that make the project look good.
+
+### Why Concurrent Chaos Agents Before LLM Integration
+
+The concurrent chaos agents phase (Week 3–4) is placed **before** LLM integration (Week 5) for three reasons:
+
+1. **Strongest validation of the safety layer.** The stress test proves the existing `Transaction::new` → `Ledger::apply` pipeline is correct under multi-threaded load with zero modifications. This is a stronger claim than "tests pass" — it's "150,000 concurrent proposals, zero invariant violations, mathematically guaranteed by the type system."
+
+2. **Justifies the Rust choice.** Without concurrency, this project could be Python. `Arc<Mutex<Ledger>>` giving compile-time data-race prevention is the single best argument for Rust in this context.
+
+3. **Independent of the LLM backend decision.** The chaos agents use the same `Agent` trait as the LLM agent but don't depend on any model download, inference backend, or prompt engineering. They can be built and showcased while the LLM spike is still in progress.
+
+**Key technical decisions for this phase:**
+
+- **`Mutex` over `RwLock`** — Every agent call is a write (`Ledger::apply`). No read-only paths exist during the stress test. `RwLock` adds overhead with zero benefit.
+- **`Send` at call site, not on trait** — `Box<dyn Agent + Send>` in `AgentConfig` only. The `Agent` trait itself is unchanged, preserving backward compatibility with the single-threaded CLI.
+- **`catch_unwind` around each proposal** — Isolates agent panics (plausible with `i64::MAX` overflow attempts) without poisoning the shared `Mutex<Ledger>`. One broken agent doesn't take down the test.
+- **Reservoir sampling for latency** — Unbiased percentile estimates without unbounded memory growth or systematic sampling bias.
+
+Full specification: `CONCURRENT_AGENTS.md`
