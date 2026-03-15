@@ -1,4 +1,8 @@
 /target
+/models
+ledger_data.json
+*.gguf
+fuzz/target
 
 #personal notes/prompts
 futureReview.md
