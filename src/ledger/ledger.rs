@@ -100,7 +100,8 @@ impl Transaction {
     ///    })
     /// ```
     pub fn new(description: String, entries: Vec<Entry>) -> Result<Self, LedgerError> {
-        todo!("Transaction::new — implement zero-sum invariant with checked arithmetic")
+        if entries.is_empty() { return Err(LedgerError::Unbalanced {actual_sum: 0})}
+
     }
 }
 
