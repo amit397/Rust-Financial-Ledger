@@ -100,7 +100,23 @@ impl Transaction {
     ///    })
     /// ```
     pub fn new(description: String, entries: Vec<Entry>) -> Result<Self, LedgerError> {
-        if entries.is_empty() { return Err(LedgerError::Unbalanced {actual_sum: 0})}
+        if entries.is_empty() { return Err(LedgerError::Unbalanced {actual_sum: 0}); }
+        
+        let mut sum: i64 = 0;
+        for e in entries.iter() {
+            if e.amount == 0 { return Err(LedgerError::InvalidAmount); }
+            
+            sum = sum.checked_add(e.amount).ok_or(LedgerError::Overflow)?;
+        }
+
+        if sum != 0 { return Err(LedgerError::Unbalanced {actual_sum: sum}) }
+
+        Ok(Self {
+            id: 0,
+            description, 
+            entries,
+            timestamp: std::time::SystemTime::now(),
+        })
 
     }
 }
