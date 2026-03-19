@@ -66,6 +66,9 @@ impl Agent for MockAgent {
 
 fn parse_dollars(s: &str) -> Result<i64, AgentError> {
     let s = s.trim_start_matches('$');
+    if s.starts_with('-') {
+        return Err(AgentError::ParseFailure("Negative amounts not allowed".to_string()));
+    }
     let parts: Vec<&str> = s.split('.').collect();
     if parts.len() > 2 {
         return Err(AgentError::ParseFailure("Invalid amount".to_string()));
@@ -138,6 +141,7 @@ mod tests {
         assert_eq!(a.propose("deposit $25.50 to checking").unwrap().entries[1].amount, 2550);
         assert_eq!(a.propose("deposit $25.5 to checking").unwrap().entries[1].amount, 2550);
         assert_eq!(a.propose("deposit $0.01 to checking").unwrap().entries[1].amount, 1);
+        assert!(a.propose("deposit $-25 to checking").is_err());
     }
 
     #[test]
