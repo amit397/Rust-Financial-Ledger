@@ -10,7 +10,7 @@ pub struct LlmAgent {
 }
 
 impl LlmAgent {
-    /// Create a new LLM agent. Returns Err with clear instructions if model file not found.
+    /// Create a new LLM agent. Returns Err if model file not found.
     /// The error message must be copy-pasteable: tell the user exactly where to download the model.
     pub fn new(model_path: &str, known_accounts: Vec<String>) -> Result<Self, String> {
         if !std::path::Path::new(model_path).exists() {
@@ -85,41 +85,33 @@ impl LlmAgent {
     }
 }
 
+#[derive(serde::Deserialize)]
+struct RawProposal {
+    description: String,
+    entries: Vec<RawEntry>,
+}
+
+#[derive(serde::Deserialize)]
+struct RawEntry {
+    account: String,
+    amount_cents: i64,
+}
+
 pub fn parse_proposal(raw: &str, _known_accounts: &[String]) -> Result<AgentProposal, AgentError> {
-    let v: serde_json::Value = serde_json::from_str(raw).map_err(|e| AgentError::ParseFailure(e.to_string()))?;
-    
-    let description = v.get("description")
-        .and_then(|d| d.as_str())
-        .ok_or_else(|| AgentError::ParseFailure("Missing description".to_string()))?
-        .to_string();
-        
-    let entries_arr = v.get("entries")
-        .and_then(|e| e.as_array())
-        .ok_or_else(|| AgentError::ParseFailure("Missing entries".to_string()))?;
-        
-    if entries_arr.is_empty() {
+    let parsed: RawProposal = serde_json::from_str(raw)
+        .map_err(|e| AgentError::ParseFailure(e.to_string()))?;
+
+    if parsed.entries.is_empty() {
         return Err(AgentError::ParseFailure("Empty entries".to_string()));
     }
-    
-    let mut entries = Vec::new();
-    for entry in entries_arr {
-        let account = entry.get("account")
-            .and_then(|a| a.as_str())
-            .ok_or_else(|| AgentError::ParseFailure("Missing account".to_string()))?
-            .to_string();
-            
-        let amount = entry.get("amount_cents")
-            .and_then(|a| a.as_i64())
-            .ok_or_else(|| AgentError::ParseFailure("Missing amount_cents".to_string()))?;
-            
-        entries.push(Entry {
-            account: AccountId(account),
-            amount,
-        });
-    }
-    
+
+    let entries = parsed.entries.into_iter().map(|e| Entry {
+        account: AccountId(e.account),
+        amount: e.amount_cents,
+    }).collect();
+
     Ok(AgentProposal {
-        description,
+        description: parsed.description,
         entries,
     })
 }
@@ -189,5 +181,38 @@ impl Agent for LlmAgent {
 
     fn name(&self) -> &str {
         "LlmAgent"
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_proposal_success() {
+        let raw = r#"{
+            "description": "buy groceries",
+            "entries": [
+                {"account": "Checking", "amount_cents": -5000},
+                {"account": "Groceries", "amount_cents": 5000}
+            ]
+        }"#;
+        let prop = parse_proposal(raw, &[]).unwrap();
+        assert_eq!(prop.description, "buy groceries");
+        assert_eq!(prop.entries.len(), 2);
+        assert_eq!(prop.entries[0].amount, -5000);
+        assert_eq!(prop.entries[0].account.0, "Checking");
+    }
+
+    #[test]
+    fn parse_proposal_missing_fields_fails() {
+        let raw = r#"{ "description": "buy groceries" }"#; // missing entries
+        assert!(parse_proposal(raw, &[]).is_err());
+    }
+
+    #[test]
+    fn parse_proposal_empty_entries_fails() {
+        let raw = r#"{ "description": "buy", "entries": [] }"#;
+        assert!(parse_proposal(raw, &[]).is_err());
     }
 }
