@@ -5,16 +5,10 @@ use super::types::{AccountId, Entry, Transaction};
 
 /// The core financial ledger.
 ///
-/// Maintains a running balance cache (`HashMap<String, i64>`) and an append-only
-/// transaction history (`Vec<Transaction>`). The cache gives O(1) balance lookups;
-/// the history enables replay and audit.
-///
-/// # Two-layer defense model
-///
-/// 1. **`Transaction::new`** — construction-time invariants (zero-sum, no zero amounts,
-///    no overflow). If you hold a `Transaction`, it is structurally valid.
-/// 2. **`Ledger::apply`** — stateful validation (account existence, sufficient funds).
-///    If `apply` returns `Ok`, the transaction is both structurally and contextually valid.
+/// Maintains a running balance cache and an append-only transaction history.
+/// Two-layer defense model:
+/// 1. `Transaction::new` — structural invariants (zero-sum, no zero amounts).
+/// 2. `Ledger::apply` — contextual validation (account existence, sufficient funds).
 pub struct Ledger {
     accounts: HashMap<String, i64>,
     history: Vec<Transaction>,
@@ -23,11 +17,6 @@ pub struct Ledger {
 
 impl Transaction {
     /// Construct a validated transaction from a description and entries.
-    ///
-    /// Construction-time invariants:
-    ///   1. Entries must not be empty.
-    ///   2. No entry may have amount == 0.
-    ///   3. The sum of all entry amounts must equal exactly zero.
     pub fn new(description: String, entries: Vec<Entry>) -> Result<Self, LedgerError> {
         if entries.is_empty() { return Err(LedgerError::Unbalanced {actual_sum: 0}); }
         
@@ -52,20 +41,6 @@ impl Transaction {
 
 impl Ledger {
     /// Creates an empty ledger with no accounts and no history.
-    ///
-    /// The `next_id` counter starts at 1 so the first committed transaction
-    /// gets `id = 1`, making it easy to distinguish "never committed" (id 0)
-    /// from "first real transaction" (id 1).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use ledger_guard::ledger::Ledger;
-    ///
-    /// let ledger = Ledger::new();
-    /// assert_eq!(ledger.transaction_count(), 0);
-    /// assert!(ledger.accounts().is_empty());
-    /// ```
     pub fn new() -> Self {
         Self {
             accounts: HashMap::new(),
@@ -75,25 +50,6 @@ impl Ledger {
     }
 
     /// Creates a new account with a zero balance.
-    ///
-    /// Account names are trimmed of leading/trailing whitespace. Empty names
-    /// (after trimming) are rejected as `AccountNotFound` — a name that is
-    /// nothing refers to nothing.
-    ///
-    /// # Errors
-    ///
-    /// - `LedgerError::AccountNotFound` — if the trimmed name is empty.
-    /// - `LedgerError::DuplicateAccount` — if an account with this name already exists.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use ledger_guard::ledger::Ledger;
-    ///
-    /// let mut ledger = Ledger::new();
-    /// ledger.create_account("Checking").unwrap();
-    /// assert_eq!(ledger.balance("Checking"), Some(0));
-    /// ```
     pub fn create_account(&mut self, name: &str) -> Result<(), LedgerError> {
         let trimmed = name.trim();
         if trimmed.is_empty() {
@@ -110,50 +66,12 @@ impl Ledger {
         Ok(())
     }
 
-    /// Returns the current balance of an account, or `None` if the account
-    /// does not exist.
-    ///
-    /// # Why `Option` instead of `Result`?
-    ///
-    /// "Account might not exist" is normal absence, not an error condition.
-    /// The caller can pattern-match on `Some`/`None` without unwrapping an
-    /// error type. This follows Rust convention: `HashMap::get` returns
-    /// `Option`, and so does our wrapper.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use ledger_guard::ledger::Ledger;
-    ///
-    /// let mut ledger = Ledger::new();
-    /// assert_eq!(ledger.balance("Nonexistent"), None);
-    ///
-    /// ledger.create_account("Savings").unwrap();
-    /// assert_eq!(ledger.balance("Savings"), Some(0));
-    /// ```
+    /// Returns the current balance of an account, or `None` if the account does not exist.
     pub fn balance(&self, name: &str) -> Option<i64> {
         self.accounts.get(name).copied()
     }
 
     /// Returns all accounts and their balances, sorted alphabetically by name.
-    ///
-    /// Deterministic output is critical for replay consistency tests — if two
-    /// ledgers that processed the same transactions in the same order produce
-    /// different `accounts()` output, something is wrong.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use ledger_guard::ledger::Ledger;
-    ///
-    /// let mut ledger = Ledger::new();
-    /// ledger.create_account("Zebra").unwrap();
-    /// ledger.create_account("Alpha").unwrap();
-    ///
-    /// let accounts = ledger.accounts();
-    /// assert_eq!(accounts[0].0, "Alpha");
-    /// assert_eq!(accounts[1].0, "Zebra");
-    /// ```
     pub fn accounts(&self) -> Vec<(String, i64)> {
         let mut sorted: Vec<(String, i64)> = self
             .accounts
@@ -165,47 +83,16 @@ impl Ledger {
     }
 
     /// Returns an immutable slice of all committed transactions, in order.
-    ///
-    /// This is the append-only event log. Combined with `accounts()`, it forms
-    /// the dual representation: the history is the source of truth, the balance
-    /// cache is the optimization. Property-based tests will verify that replaying
-    /// `history()` from scratch produces the same `accounts()` output.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use ledger_guard::ledger::Ledger;
-    ///
-    /// let ledger = Ledger::new();
-    /// assert!(ledger.history().is_empty());
-    /// ```
     pub fn history(&self) -> &[Transaction] {
         &self.history
     }
 
     /// Returns the total number of committed transactions.
-    ///
-    /// This is always equal to `self.history().len()`. Having a dedicated method
-    /// makes intent clearer at call sites and avoids exposing the full history
-    /// just to count entries.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use ledger_guard::ledger::Ledger;
-    ///
-    /// let ledger = Ledger::new();
-    /// assert_eq!(ledger.transaction_count(), 0);
-    /// ```
     pub fn transaction_count(&self) -> usize {
         self.history.len()
     }
 
     /// Apply a validated transaction to the ledger.
-    ///
-    /// Checks whether the transaction is valid given current state:
-    /// 1. Verifies accounts exist.
-    /// 2. Verifies sufficient funds for non-External accounts.
     pub fn apply(&mut self, mut tx: Transaction) -> Result<(), LedgerError> {
         for entry in &tx.entries {
             if !self.accounts.contains_key(&entry.account.0) {
