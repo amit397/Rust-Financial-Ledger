@@ -1,18 +1,16 @@
 # Session Context — LedgerGuard
 
 ## Last Completed
-Phase 1: Project Scaffold + Ledger Core (2026-03-15)
+Phase 2: Agent Layer (mock, llm stubs, chaos agents)
 
 ## Current State
-- All Phase 1 files created and compiling
-- `Transaction::new` and `Ledger::apply` are `todo!()` stubs for user to implement
-- 48 unit tests written; 10 pass (non-stub tests), 29 fail on stubs (expected)
-- 6 doc tests pass
+- Phase 1 (Ledger Core) is fully implemented, all comments cleaned up, tests pass.
+- Phase 2 (Agent Layer) is fully implemented and compiling.
+- `MockAgent`, `LlmAgent`, and 6 Chaos agents added.
+- `build_prompt` and `call_with_retry` inside `LlmAgent` are `todo!()` stubs.
 
 ## Open Follow-ups
-- User implements `Transaction::new` todo!() stub
-- User implements `Ledger::apply` todo!() stub
-- Phase 2: `pub mod agent;` — chaos agents
+- User implements `LlmAgent` todo!() stubs (`build_prompt` and `call_with_retry`)
 - Phase 3: `pub mod persistence;` + `pub mod cli;`
 - Phase 4: `pub mod stress;`
 - Phase 5: LLM integration
@@ -24,6 +22,7 @@ Phase 1: Project Scaffold + Ledger Core (2026-03-15)
 - Two-phase apply design for concurrent safety
 - next_id starts at 1 (id 0 = "never committed")
 - "External" account exempt from non-negative balance constraint
+- Agent trait established as uniform boundary for all inference/mock/chaos sources.
 
 ## Installed Skills
 - rust-router
