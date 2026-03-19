@@ -1,13 +1,12 @@
 # Session Context — LedgerGuard
 
 ## Last Completed
-Phase 2: Agent Layer (mock, llm stubs, chaos agents)
+Codebase Cleanup: Removed excessive comments (retaining llm.rs todo stubs)
 
 ## Current State
-- Phase 1 (Ledger Core) is fully implemented, all comments cleaned up, tests pass.
-- Phase 2 (Agent Layer) is fully implemented and compiling.
-- `MockAgent`, `LlmAgent`, and 6 Chaos agents added.
-- `build_prompt` and `call_with_retry` inside `LlmAgent` are `todo!()` stubs.
+- Codebase (Phase 1 & 2) is clean with one-liner doc comments.
+- Preserved instructional `todo!()` stubs inside `src/agent/llm.rs` per User's request (Interpretation B).
+- 58 tests passing successfully.
 
 ## Open Follow-ups
 - User implements `LlmAgent` todo!() stubs (`build_prompt` and `call_with_retry`)
@@ -23,6 +22,7 @@ Phase 2: Agent Layer (mock, llm stubs, chaos agents)
 - next_id starts at 1 (id 0 = "never committed")
 - "External" account exempt from non-negative balance constraint
 - Agent trait established as uniform boundary for all inference/mock/chaos sources.
+- Retained User instructional `todo!()` stubs during aggressive codebase comment cleanup.
 
 ## Installed Skills
 - rust-router

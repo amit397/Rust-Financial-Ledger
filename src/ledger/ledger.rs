@@ -24,81 +24,10 @@ pub struct Ledger {
 impl Transaction {
     /// Construct a validated transaction from a description and entries.
     ///
-    /// This is the FIRST LINE OF DEFENSE. Construction-time invariants:
+    /// Construction-time invariants:
     ///   1. Entries must not be empty.
-    ///   2. No entry may have amount == 0 (InvalidAmount).
-    ///   3. The sum of all entry amounts must equal exactly zero (Unbalanced).
-    ///      Use checked_add to accumulate the sum — if any addition overflows, return Overflow.
-    ///
-    /// # Why Result instead of panic?
-    ///
-    /// Panicking on invalid input means the program crashes when an agent sends garbage.
-    /// Returning Result means the caller decides what to do — log it, report it, retry.
-    /// Panics are for programmer errors (bugs). Invalid agent input is an expected runtime
-    /// condition, not a bug. This distinction matters in production systems.
-    ///
-    /// In Rust, the convention is:
-    /// - `panic!` / `unwrap()` / `expect()` → invariant violations, programmer bugs
-    /// - `Result<T, E>` → expected failures that callers should handle
-    ///
-    /// An AI agent sending `{"entries": []}` is not a bug in our code — it's bad input
-    /// from an untrusted source. We return `Err`, not crash.
-    ///
-    /// # Why not typestate (DraftTransaction → ValidatedTransaction)?
-    ///
-    /// Typestate is justified when many consumers might skip validation steps.
-    /// This project has two consumers (agent and CLI). Typestate would add significant
-    /// complexity for no safety gain. The constructor IS the typestate — you cannot hold
-    /// a Transaction that skipped validation. The type itself is the proof of validity.
-    ///
-    /// Consider: with typestate, you'd need `DraftTransaction`, `ValidatedTransaction`,
-    /// and conversion methods between them. That's three types instead of one, with
-    /// generic parameters or phantom types to enforce ordering. For two consumers,
-    /// that complexity doesn't pay for itself.
-    ///
-    /// # Why `checked_add` instead of plain addition?
-    ///
-    /// `i64` can overflow. Plain addition wraps silently in release mode (Rust uses
-    /// two's complement wrapping for release builds, panics in debug builds). A malicious
-    /// agent sending `i64::MAX` and `-i64::MAX + 1` would appear balanced under plain
-    /// addition but isn't — the sum would wrap around.
-    ///
-    /// `checked_add` returns `Option<i64>`:
-    /// - `Some(result)` if the addition is safe
-    /// - `None` if it would overflow
-    ///
-    /// We map `None` → `LedgerError::Overflow`. This is Rust's idiomatic approach:
-    /// make the error case explicit, not silent. Other options exist (`saturating_add`,
-    /// `wrapping_add`) but `checked_add` is the right choice here because we want to
-    /// REJECT the transaction, not silently cap or wrap the value.
-    ///
-    /// # Implementation steps
-    ///
-    /// ```text
-    /// 1. If entries.is_empty(), return Err(LedgerError::Unbalanced { actual_sum: 0 }).
-    ///    — An empty transaction is meaningless. We use Unbalanced rather than a new
-    ///      variant because it IS unbalanced (sum of nothing is 0, but we require
-    ///      at least one entry to make that sum meaningful).
-    ///
-    /// 2. Iterate entries. For each entry:
-    ///    if entry.amount == 0, return Err(LedgerError::InvalidAmount).
-    ///    — Zero-amount entries are accounting noise. They don't debit or credit
-    ///      anything. Rejecting them keeps the ledger clean and prevents agents
-    ///      from padding transactions with meaningless entries.
-    ///
-    /// 3. Accumulate sum using checked arithmetic:
-    ///    let sum = entries.iter().try_fold(0i64, |acc, e| acc.checked_add(e.amount));
-    ///    — try_fold is like fold, but short-circuits on None (overflow).
-    ///    — If sum is None → return Err(LedgerError::Overflow)
-    ///    — If sum is Some(s) and s != 0 → return Err(LedgerError::Unbalanced { actual_sum: s })
-    ///
-    /// 4. All checks passed. Return Ok(Transaction {
-    ///        id: 0,           // Placeholder — Ledger::apply assigns the real id
-    ///        description,
-    ///        entries,
-    ///        timestamp: std::time::SystemTime::now(),
-    ///    })
-    /// ```
+    ///   2. No entry may have amount == 0.
+    ///   3. The sum of all entry amounts must equal exactly zero.
     pub fn new(description: String, entries: Vec<Entry>) -> Result<Self, LedgerError> {
         if entries.is_empty() { return Err(LedgerError::Unbalanced {actual_sum: 0}); }
         
@@ -274,99 +203,41 @@ impl Ledger {
 
     /// Apply a validated transaction to the ledger.
     ///
-    /// This is the SECOND LINE OF DEFENSE — stateful validation.
-    /// `Transaction::new` already proved the entries are structurally balanced.
-    /// `Ledger::apply` checks whether the transaction is valid GIVEN CURRENT STATE.
-    ///
-    /// # Two-phase design — critical for concurrent correctness
-    ///
-    /// ## Phase 1 — Validation (read-only, NO mutation)
-    ///
-    /// For each entry in `tx.entries`:
-    ///
-    /// a. Verify the account exists in `self.accounts`. If not → `AccountNotFound`.
-    ///    Use `self.accounts.get(&entry.account.0)` — if it returns `None`, the
-    ///    account was never created with `create_account()`.
-    ///
-    /// b. For each debit entry (`amount < 0`): verify `current_balance + amount >= 0`,
-    ///    UNLESS the account name is `"External"` (External can go negative — it
-    ///    represents the outside world, not an internal account with a real constraint).
-    ///
-    ///    If balance would go negative → `InsufficientFunds { account, available, requested }`.
-    ///    Note: `requested` should be the **absolute value** of the debit amount
-    ///    (i.e., `amount.abs()`), because the error message says "requested $X" —
-    ///    negative dollars in a user-facing message is confusing.
-    ///
-    /// ## Phase 2 — Commit (mutation, MUST be infallible)
-    ///
-    /// If and only if ALL validations in Phase 1 passed:
-    ///
-    /// a. Assign `self.next_id` to `tx.id`, then increment `self.next_id`.
-    ///
-    /// b. For each entry: update the balance:
-    ///    ```text
-    ///    let balance = self.accounts.get_mut(&entry.account.0).unwrap();
-    ///    *balance = balance.checked_add(entry.amount)
-    ///        .expect("balance overflow in commit phase — invariant violation");
-    ///    ```
-    ///    The `unwrap()` and `expect()` here are correct — if we reach Phase 2,
-    ///    we already verified the account exists (Phase 1a) and the arithmetic
-    ///    is safe (Transaction::new checked the sum). A panic here would indicate
-    ///    a bug in our validation logic, not bad user input. This is exactly when
-    ///    `expect()` is appropriate: "this should be unreachable; if it fires,
-    ///    our code has a bug."
-    ///
-    /// c. Push `tx` into `self.history`.
-    ///
-    /// # Why two phases?
-    ///
-    /// If you interleave validation and mutation (validate entry 1, apply entry 1,
-    /// validate entry 2 — fails), you've partially mutated the ledger and must
-    /// roll back. Rollback logic is complex, error-prone, and hard to test
-    /// exhaustively. Two phases means: either ALL validations pass and ALL
-    /// mutations apply, or NO mutations happen. Atomic from the caller's perspective.
-    ///
-    /// Under concurrent load (`Arc<Mutex<Ledger>>` in Phase 4), this means a thread
-    /// that panics in Phase 1 leaves the ledger completely unmodified. Mutex poison
-    /// recovery is safe precisely because Phase 1 never mutates. This design
-    /// decision in Phase 1 enables the safety guarantee in Phase 4.
-    ///
-    /// # Implementation
-    ///
-    /// ```text
-    /// // Phase 1: Validation — collect the first error, return it
-    /// for entry in &tx.entries {
-    ///     let balance = self.accounts.get(&entry.account.0)
-    ///         .ok_or_else(|| LedgerError::AccountNotFound {
-    ///             name: entry.account.0.clone(),
-    ///         })?;
-    ///
-    ///     if entry.amount < 0 && entry.account.0 != "External" {
-    ///         if *balance + entry.amount < 0 {
-    ///             return Err(LedgerError::InsufficientFunds {
-    ///                 account: entry.account.0.clone(),
-    ///                 available: *balance,
-    ///                 requested: entry.amount.abs(),
-    ///             });
-    ///         }
-    ///     }
-    /// }
-    ///
-    /// // Phase 2: Commit — infallible after Phase 1
-    /// tx.id = self.next_id;
-    /// self.next_id += 1;
-    ///
-    /// for entry in &tx.entries {
-    ///     let balance = self.accounts.get_mut(&entry.account.0).unwrap();
-    ///     *balance = balance.checked_add(entry.amount)
-    ///         .expect("balance overflow in commit phase — invariant violation");
-    /// }
-    ///
-    /// self.history.push(tx);
-    /// Ok(())
-    /// ```
+    /// Checks whether the transaction is valid given current state:
+    /// 1. Verifies accounts exist.
+    /// 2. Verifies sufficient funds for non-External accounts.
     pub fn apply(&mut self, mut tx: Transaction) -> Result<(), LedgerError> {
-        todo!("Ledger::apply — implement two-phase validation + commit")
+        for entry in &tx.entries {
+            if !self.accounts.contains_key(&entry.account.0) {
+                return Err(LedgerError::AccountNotFound {
+                    name: entry.account.0.clone(),
+                });
+            }
+        }
+
+        for entry in &tx.entries {
+            if entry.amount < 0 && entry.account.0 != "External" {
+                let balance = self.accounts.get(&entry.account.0).unwrap();
+                if *balance + entry.amount < 0 {
+                    return Err(LedgerError::InsufficientFunds {
+                        account: entry.account.0.clone(),
+                        available: *balance,
+                        requested: entry.amount.abs(),
+                    });
+                }
+            }
+        }
+
+        tx.id = self.next_id;
+        self.next_id += 1;
+        for entry in &tx.entries {
+            let balance = self.accounts.get_mut(&entry.account.0).unwrap();
+
+            *balance = balance.checked_add(entry.amount).expect("balance overflow in commit phase - invariant violation");
+        }
+
+        self.history.push(tx);
+        Ok(())
     }
 }
 
