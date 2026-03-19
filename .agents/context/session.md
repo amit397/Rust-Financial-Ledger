@@ -1,7 +1,7 @@
 # Session Context — LedgerGuard
 
 ## Last Completed
-Codebase Cleanup: Removed excessive comments (retaining llm.rs todo stubs)
+AI Code Debt Review: Fixed potential reversed transfers in `mock.rs` and refactored JSON deserialization in `llm.rs`.
 
 ## Current State
 - Codebase (Phase 1 & 2) is clean with one-liner doc comments.
