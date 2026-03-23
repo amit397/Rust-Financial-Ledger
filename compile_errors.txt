@@ -1,0 +1,40 @@
+    Checking ledger-guard v0.1.0 (C:\Users\User\Desktop\rust-financial-ledger)
+warning: unused import: `AccountId`
+ --> src\ledger\ledger.rs:4:20
+  |
+4 | use super::types::{AccountId, Entry, Transaction};
+  |                    ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+error[E0599]: no method named `shuffle` found for struct `Vec<&std::string::String>` in the current scope
+  --> src\agent\chaos.rs:30:18
+   |
+30 |             accs.shuffle(&mut rng);
+   |                  ^^^^^^^ method not found in `Vec<&std::string::String>`
+   |
+   = help: items from traits can only be used if the trait is in scope
+help: the following traits which provide `shuffle` are implemented but not in scope; perhaps you want to import one of them
+   |
+ 1 + use rand::prelude::SliceRandom;
+   |
+ 1 + use rand::seq::SliceRandom;
+   |
+
+error[E0599]: no method named `shuffle` found for struct `Vec<std::string::String>` in the current scope
+  --> src\agent\chaos.rs:56:14
+   |
+56 |         accs.shuffle(&mut rng);
+   |              ^^^^^^^ method not found in `Vec<std::string::String>`
+   |
+   = help: items from traits can only be used if the trait is in scope
+help: the following traits which provide `shuffle` are implemented but not in scope; perhaps you want to import one of them
+   |
+ 1 + use rand::prelude::SliceRandom;
+   |
+ 1 + use rand::seq::SliceRandom;
+   |
+
+For more information about this error, try `rustc --explain E0599`.
+warning: `ledger-guard` (lib) generated 1 warning
+error: could not compile `ledger-guard` (lib) due to 2 previous errors; 1 warning emitted

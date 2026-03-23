@@ -1,18 +1,16 @@
 # Session Context — LedgerGuard
 
 ## Last Completed
-AI Code Debt Review: Fixed potential reversed transfers in `mock.rs` and refactored JSON deserialization in `llm.rs`.
+Fixed Phase 2 implementaton logic (llm parsing imports and Chaos Agents), implemented Phase 3 (Persistence and CLI).
 
 ## Current State
-- Codebase (Phase 1 & 2) is clean with one-liner doc comments.
-- Preserved instructional `todo!()` stubs inside `src/agent/llm.rs` per User's request (Interpretation B).
-- 58 tests passing successfully.
+- Phase 2 fully functional and passing all `agent` tests.
+- Phase 3 persistence and rustyline REPL CLI implemented and compiled.
+- Agent tests passing successfully (13/13).
 
 ## Open Follow-ups
-- User implements `LlmAgent` todo!() stubs (`build_prompt` and `call_with_retry`)
-- Phase 3: `pub mod persistence;` + `pub mod cli;`
 - Phase 4: `pub mod stress;`
-- Phase 5: LLM integration
+- Phase 5: Execute overarching stress tests and usage.
 
 ## Decisions Made
 - i64 cents for all monetary amounts (domain-fintech skill)

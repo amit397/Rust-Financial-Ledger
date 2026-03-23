@@ -1,0 +1,23 @@
+    Checking ledger-guard v0.1.0 (C:\Users\User\Desktop\rust-financial-ledger)
+warning: unused import: `AccountId`
+ --> src\ledger\ledger.rs:4:20
+  |
+4 | use super::types::{AccountId, Entry, Transaction};
+  |                    ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+error[E0599]: no method named `chat_request` found for struct `Model` in the current scope
+   --> src\agent\llm.rs:123:37
+    |
+123 |         if let Ok(response) = model.chat_request(messages).await {
+    |                                     ^^^^^^^^^^^^
+    |
+help: there is a method `send_chat_request` with a similar name
+    |
+123 |         if let Ok(response) = model.send_chat_request(messages).await {
+    |                                     +++++
+
+For more information about this error, try `rustc --explain E0599`.
+warning: `ledger-guard` (lib) generated 1 warning
+error: could not compile `ledger-guard` (lib) due to 1 previous error; 1 warning emitted

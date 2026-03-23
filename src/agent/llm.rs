@@ -1,6 +1,10 @@
 use crate::agent::{Agent, AgentProposal, AgentError};
 use crate::ledger::Entry;
 use crate::ledger::AccountId;
+use mistralrs::{GgufModelBuilder, TextMessageRole, TextMessages};
+use std::sync::mpsc;
+use std::thread;
+use std::time::Duration;
 
 pub struct LlmAgent {
     model_path: String,
@@ -81,7 +85,79 @@ impl LlmAgent {
         //   Production fix: isolate the model in a subprocess, communicate via IPC.
         //   For this project: document it in README. The limitation itself demonstrates
         //   understanding of FFI safety boundaries — valuable in an interview.
-        todo!("call_with_retry — 2-attempt retry loop with 30s per-attempt timeout")
+        for attempt in 0..=self.max_retries {
+            let (tx, rx) = mpsc::channel::<String>();
+
+            let model_path = self.model_path.clone();
+            let prompt = build_prompt(input, &self.known_accounts);
+
+            thread::spawn(move || {
+                let rt = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .expect("Failed to build tokio runtime");
+
+    // 2. Block the background thread while the async runtime executes the AI math
+    rt.block_on(async {
+        // 3. Initialize the model pipeline (pointing it to the downloaded file)
+        // Assuming self.model_path is the directory like "./models"
+        let model = match GgufModelBuilder::new(
+            model_path, 
+            vec!["Phi-3-mini-4k-instruct-q4.gguf".to_string()]
+        )
+        .build()
+        .await 
+        {
+            Ok(m) => m,
+            Err(e) => {
+                eprintln!("\n[LLM Error] Engine failed to load: {}", e);
+                return; // Exits the thread, causing a timeout/disconnect in the main thread
+            }
+        };
+
+        // 4. Package our strict engineered prompt into a message
+        let messages = TextMessages::new()
+            .add_message(TextMessageRole::User, &prompt);
+
+        // 5. Run the inference! 
+        if let Ok(response) = model.send_chat_request(messages).await {
+            // Extract the actual string text from the AI's response object
+            if let Some(generated_text) = response.choices.first().and_then(|c| c.message.content.clone()) {
+                
+                // 6. Shove the result into the mpsc pneumatic tube back to the main thread!
+                tx.send(generated_text).ok();
+            }
+        }
+    });
+            });
+            
+            let timeout = Duration::from_secs(self.timeout_secs);
+        
+        match rx.recv_timeout(timeout) {
+            // Success! The thread finished before the 30 seconds were up.
+            Ok(raw_json) => {
+                match parse_proposal(&raw_json, &self.known_accounts) {
+                    Ok(proposal) => return Ok(proposal), // Perfect parse, we are done!
+                    Err(e) => {
+                        // The LLM output garbage JSON. Should we try again?
+                        if attempt < self.max_retries {
+                            // Silent retry: We don't crash, we just loop again.
+                            continue; 
+                        } else {
+                            // We are out of retries. Bubble the error up to the user.
+                            return Err(e);
+                        }
+                    }
+                }
+            }
+            // The model took too long, or the thread crashed (disconnected).
+            Err(mpsc::RecvTimeoutError::Timeout) => return Err(AgentError::Timeout),
+            Err(mpsc::RecvTimeoutError::Disconnected) => return Err(AgentError::ParseFailure("LLM thread crashed".to_string())),
+        }
+    }
+    
+    unreachable!("Loop should always return or error out")
+        
     }
 }
 
@@ -171,7 +247,47 @@ fn build_prompt(input: &str, known_accounts: &[String]) -> String {
     //
     // AFTER IMPLEMENTING: test parse rate against benches/corpus/paraphrased.json.
     // Target: ≥85% first-attempt parse rate, ≥95% after retry.
-    todo!("build_prompt — write system prompt + 5 few-shot examples with JSON schema")
+    let accounts_list = known_accounts.join(", ");
+
+    let system_prompt =  format!(
+        "Output ONLY JSON. You are a strict financial ledger assistant.\n\
+        Your job is to translate user requests into balanced double-entry bookkeeping JSON.\n\
+        \n\
+        SCHEMA:\n\
+        {{\n\
+          \"description\": \"short human-readable description\",\n\
+          \"entries\": [\n\
+            {{ \"account\": \"AccountName\", \"amount_cents\": -5000 }},\n\
+            {{ \"account\": \"AccountName\", \"amount_cents\": 5000 }}\n\
+          ]\n\
+        }}\n\
+        \n\
+        RULES:\n\
+        1. Output ONLY the raw JSON object. No prose. No markdown fences (```).\n\
+        2. `amount_cents` must be an integer (no decimal points).\n\
+        3. Negative `amount_cents` = debit (money leaves).\n\
+        4. Positive `amount_cents` = credit (money enters).\n\
+        5. The entries MUST sum to exactly zero.\n\
+        6. Available accounts: {accounts_list}.\n"
+    );
+
+    let examples = "\
+    Input: move $50 from Checking to Savings\n\
+        Output: { \"description\": \"transfer to savings\", \"entries\": [ { \"account\": \"Checking\", \"amount_cents\": -5000 }, { \"account\": \"Savings\", \"amount_cents\": 5000 } ] }\n\
+        \n\
+        Input: deposited a $1000 check from work\n\
+        Output: { \"description\": \"paycheck deposit\", \"entries\": [ { \"account\": \"External\", \"amount_cents\": -100000 }, { \"account\": \"Checking\", \"amount_cents\": 100000 } ] }\n\
+        \n\
+        Input: move fifty bucks to savings from checking\n\
+        Output: { \"description\": \"transfer to savings\", \"entries\": [ { \"account\": \"Checking\", \"amount_cents\": -5000 }, { \"account\": \"Savings\", \"amount_cents\": 5000 } ] }\n\
+        \n\
+        Input: transfer negative $50 to Checking\n\
+        Output: { \"error\": \"cannot process negative transfer\" }\n\
+        \n\
+        Input: pay rent\n\
+        Output: { \"error\": \"ambiguous request: missing source or destination account\" }\n";
+    
+    format!("{}\n{}\nInput: {}\nOutput:\n", system_prompt, examples, input)
 }
 
 impl Agent for LlmAgent {
