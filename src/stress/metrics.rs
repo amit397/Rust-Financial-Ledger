@@ -128,9 +128,10 @@ impl MetricsCollector {
         let mut sorted = self.latencies.lock().unwrap_or_else(|p| p.into_inner()).clone();
         if !sorted.is_empty() {
             sorted.sort_unstable();
-            p50 = Some(sorted[(sorted.len() as f64 * 0.5) as usize].as_secs_f64() * 1000.0);
-            p95 = Some(sorted[(sorted.len() as f64 * 0.95) as usize].as_secs_f64() * 1000.0);
-            p99 = Some(sorted[(sorted.len() as f64 * 0.99) as usize].as_secs_f64() * 1000.0);
+            let idx = |pct: f64| ((sorted.len() as f64 * pct) as usize).min(sorted.len() - 1);
+            p50 = Some(sorted[idx(0.5)].as_secs_f64() * 1000.0);
+            p95 = Some(sorted[idx(0.95)].as_secs_f64() * 1000.0);
+            p99 = Some(sorted[idx(0.99)].as_secs_f64() * 1000.0);
         }
 
         let mut sum_wait = 0;
