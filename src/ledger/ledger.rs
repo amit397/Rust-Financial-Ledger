@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::error::LedgerError;
-use super::types::{AccountId, Entry, Transaction};
+use super::types::{Entry, Transaction};
 
 /// The core financial ledger.
 ///
@@ -133,6 +133,7 @@ impl Ledger {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ledger::AccountId;
 
     // -----------------------------------------------------------------------
     // Helper: build entries quickly

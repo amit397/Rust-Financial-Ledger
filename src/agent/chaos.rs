@@ -270,4 +270,17 @@ mod tests {
             let _ = a.propose("").unwrap();
         }
     }
+    #[test]
+    fn test_valid_agent_insufficient_accounts() {
+        let a = ValidAgent::new(vec!["External".into(), "Solo".into()]);
+        // With only 1 non-External account, transfer path should error, not panic
+        let mut saw_error = false;
+        for _ in 0..20 {
+            match a.propose("") {
+                Err(_) => { saw_error = true; break; }
+                Ok(_) => {} // deposit path still works
+            }
+        }
+        assert!(saw_error, "Expected an error from ValidAgent with only 1 non-External account");
+    }
 }
