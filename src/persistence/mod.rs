@@ -84,34 +84,36 @@ mod tests {
 
     #[test]
     fn test_round_trip() {
-        let path = "test_round_trip.json";
+        let path = std::env::temp_dir().join("ledger_test_round_trip.json");
+        let path_str = path.to_str().unwrap();
         let history = vec![test_tx(), test_tx(), test_tx()];
         
-        save(path, &history).unwrap();
-        let loaded = load(path).unwrap();
+        save(path_str, &history).unwrap();
+        let loaded = load(path_str).unwrap();
         
         assert_transactions_equal(&history, &loaded);
-        std::fs::remove_file(path).unwrap();
+        std::fs::remove_file(&path).unwrap();
     }
 
     #[test]
     fn test_missing_file() {
-        let path = "does_not_exist.json";
-        // Clean up just in case
-        let _ = std::fs::remove_file(path);
+        let path = std::env::temp_dir().join("ledger_test_does_not_exist.json");
+        let path_str = path.to_str().unwrap();
+        let _ = std::fs::remove_file(&path);
         
-        let loaded = load(path).unwrap();
+        let loaded = load(path_str).unwrap();
         assert!(loaded.is_empty());
     }
 
     #[test]
     fn test_corrupt_file() {
-        let path = "test_corrupt.json";
-        let mut f = File::create(path).unwrap();
+        let path = std::env::temp_dir().join("ledger_test_corrupt.json");
+        let path_str = path.to_str().unwrap();
+        let mut f = File::create(&path).unwrap();
         f.write_all(b"not json").unwrap();
         
-        let loaded = load(path);
+        let loaded = load(path_str);
         assert!(loaded.is_err());
-        std::fs::remove_file(path).unwrap();
+        std::fs::remove_file(&path).unwrap();
     }
 }

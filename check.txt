@@ -1,0 +1,301 @@
+warning: unused import: `AccountId`
+ --> src\ledger\ledger.rs:4:20
+  |
+4 | use super::types::{AccountId, Entry, Transaction};
+  |                    ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Ordering`
+ --> src\stress\mod.rs:5:37
+  |
+5 | use std::sync::atomic::{AtomicBool, Ordering};
+  |                                     ^^^^^^^^
+
+warning: unused imports: `print_report` and `verify_invariants`
+  --> src\stress\mod.rs:10:52
+   |
+10 | ...onResult, print_report, verify_invariants};
+   |              ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^
+
+warning: unused variable: `agent_id`
+   --> src\stress\metrics.rs:176:36
+    |
+176 | ...lock_wait(&self, agent_id: usize, duration: Duratio...
+    |                     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_agent_id`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `duration`
+   --> src\stress\metrics.rs:176:53
+    |
+176 | ...agent_id: usize, duration: Duration) {
+    |                     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_duration`
+
+warning: unused variable: `duration`
+   --> src\stress\metrics.rs:208:52
+    |
+208 | ...agent_id: usize, duration: Duration) {
+    |                     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_duration`
+
+warning: field `accounts` is never read
+   --> src\agent\chaos.rs:169:5
+    |
+163 | pub struct ChaosAgent {
+    |            ---------- field in this struct
+...
+169 |     accounts: Vec<String>,
+    |     ^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `agent_thread` is never used
+   --> src\stress\mod.rs:155:4
+    |
+155 | fn agent_thread(
+    |    ^^^^^^^^^^^^
+
+warning: `ledger-guard` (lib) generated 8 warnings (run `cargo fix --lib -p ledger-guard` to apply 6 suggestions)
+    Checking ledger-guard v0.1.0 (C:\Users\User\Desktop\rust-financial-ledger)
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:62:37
+   |
+62 |         let mut configs: Vec<crate::stress::AgentConfig> = vec![
+   |                                     ^^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+62 |         let mut configs: Vec<crate::ledger_guard::stress::AgentConfig> = vec![
+   |                                     ++++++++++++++
+help: consider importing this module
+   |
+ 1 + use ledger_guard::stress;
+   |
+help: if you import `stress`, refer to it directly
+   |
+62 -         let mut configs: Vec<crate::stress::AgentConfig> = vec![
+62 +         let mut configs: Vec<stress::AgentConfig> = vec![
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:63:20
+   |
+63 | ...   crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::ValidAgent::new(accounts.clone())),    name: "ValidAgent".into() },
+   |              ^^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+63 |             crate::ledger_guard::stress::AgentConfig { agent: Box::new(crate::agent::chaos::ValidAgent::new(accounts.clone())),    name: "ValidAgent".into() },
+   |                    ++++++++++++++
+help: consider importing this module
+   |
+ 1 + use ledger_guard::stress;
+   |
+help: if you import `stress`, refer to it directly
+   |
+63 -             crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::ValidAgent::new(accounts.clone())),    name: "ValidAgent".into() },
+63 +             stress::AgentConfig { agent: Box::new(crate::agent::chaos::ValidAgent::new(accounts.clone())),    name: "ValidAgent".into() },
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:63:65
+   |
+63 | ...   crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::ValidAgent::new(accounts.clone())),    name: "ValidAgent".into() },
+   |                                                           ^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+63 |             crate::stress::AgentConfig { agent: Box::new(crate::ledger_guard::agent::chaos::ValidAgent::new(accounts.clone())),    name: "ValidAgent".into() },
+   |                                                                 ++++++++++++++
+help: consider importing this struct
+   |
+ 1 + use ledger_guard::agent::chaos::ValidAgent;
+   |
+help: if you import `ValidAgent`, refer to it directly
+   |
+63 -             crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::ValidAgent::new(accounts.clone())),    name: "ValidAgent".into() },
+63 +             crate::stress::AgentConfig { agent: Box::new(ValidAgent::new(accounts.clone())),    name: "ValidAgent".into() },
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:64:20
+   |
+64 | ...   crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverdraftAgent::new(accounts.clone())), name: "OverdraftAgent".in...
+   |              ^^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+64 |             crate::ledger_guard::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverdraftAgent::new(accounts.clone())), name: "OverdraftAgent".into() },
+   |                    ++++++++++++++
+help: consider importing this module
+   |
+ 1 + use ledger_guard::stress;
+   |
+help: if you import `stress`, refer to it directly
+   |
+64 -             crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverdraftAgent::new(accounts.clone())), name: "OverdraftAgent".into() },
+64 +             stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverdraftAgent::new(accounts.clone())), name: "OverdraftAgent".into() },
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:64:65
+   |
+64 | ...   crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverdraftAgent::new(accounts.clone())), name: "OverdraftAgent".in...
+   |                                                           ^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+64 |             crate::stress::AgentConfig { agent: Box::new(crate::ledger_guard::agent::chaos::OverdraftAgent::new(accounts.clone())), name: "OverdraftAgent".into() },
+   |                                                                 ++++++++++++++
+help: consider importing this struct
+   |
+ 1 + use ledger_guard::agent::chaos::OverdraftAgent;
+   |
+help: if you import `OverdraftAgent`, refer to it directly
+   |
+64 -             crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverdraftAgent::new(accounts.clone())), name: "OverdraftAgent".into() },
+64 +             crate::stress::AgentConfig { agent: Box::new(OverdraftAgent::new(accounts.clone())), name: "OverdraftAgent".into() },
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:65:20
+   |
+65 | ...   crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::TypoAgent::new(accounts.clone())),     name: "TypoAgent".into() },
+   |              ^^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+65 |             crate::ledger_guard::stress::AgentConfig { agent: Box::new(crate::agent::chaos::TypoAgent::new(accounts.clone())),     name: "TypoAgent".into() },
+   |                    ++++++++++++++
+help: consider importing this module
+   |
+ 1 + use ledger_guard::stress;
+   |
+help: if you import `stress`, refer to it directly
+   |
+65 -             crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::TypoAgent::new(accounts.clone())),     name: "TypoAgent".into() },
+65 +             stress::AgentConfig { agent: Box::new(crate::agent::chaos::TypoAgent::new(accounts.clone())),     name: "TypoAgent".into() },
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:65:65
+   |
+65 | ...   crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::TypoAgent::new(accounts.clone())),     name: "TypoAgent".into() },
+   |                                                           ^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+65 |             crate::stress::AgentConfig { agent: Box::new(crate::ledger_guard::agent::chaos::TypoAgent::new(accounts.clone())),     name: "TypoAgent".into() },
+   |                                                                 ++++++++++++++
+help: consider importing this struct
+   |
+ 1 + use ledger_guard::agent::chaos::TypoAgent;
+   |
+help: if you import `TypoAgent`, refer to it directly
+   |
+65 -             crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::TypoAgent::new(accounts.clone())),     name: "TypoAgent".into() },
+65 +             crate::stress::AgentConfig { agent: Box::new(TypoAgent::new(accounts.clone())),     name: "TypoAgent".into() },
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:66:20
+   |
+66 | ...   crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverflowAgent::new(accounts.clone())), name: "OverflowAgent".into...
+   |              ^^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+66 |             crate::ledger_guard::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverflowAgent::new(accounts.clone())), name: "OverflowAgent".into() },
+   |                    ++++++++++++++
+help: consider importing this module
+   |
+ 1 + use ledger_guard::stress;
+   |
+help: if you import `stress`, refer to it directly
+   |
+66 -             crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverflowAgent::new(accounts.clone())), name: "OverflowAgent".into() },
+66 +             stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverflowAgent::new(accounts.clone())), name: "OverflowAgent".into() },
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:66:65
+   |
+66 | ...   crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverflowAgent::new(accounts.clone())), name: "OverflowAgent".into...
+   |                                                           ^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+66 |             crate::stress::AgentConfig { agent: Box::new(crate::ledger_guard::agent::chaos::OverflowAgent::new(accounts.clone())), name: "OverflowAgent".into() },
+   |                                                                 ++++++++++++++
+help: consider importing this struct
+   |
+ 1 + use ledger_guard::agent::chaos::OverflowAgent;
+   |
+help: if you import `OverflowAgent`, refer to it directly
+   |
+66 -             crate::stress::AgentConfig { agent: Box::new(crate::agent::chaos::OverflowAgent::new(accounts.clone())), name: "OverflowAgent".into() },
+66 +             crate::stress::AgentConfig { agent: Box::new(OverflowAgent::new(accounts.clone())), name: "OverflowAgent".into() },
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:69:33
+   |
+69 |             configs.push(crate::stress::AgentConfig {
+   |                                 ^^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+69 |             configs.push(crate::ledger_guard::stress::AgentConfig {
+   |                                 ++++++++++++++
+help: consider importing this module
+   |
+ 1 + use ledger_guard::stress;
+   |
+help: if you import `stress`, refer to it directly
+   |
+69 -             configs.push(crate::stress::AgentConfig {
+69 +             configs.push(stress::AgentConfig {
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:70:40
+   |
+70 |                 agent: Box::new(crate::agent::chaos::ChaosAgent::new(accounts.clone())),
+   |                                        ^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+70 |                 agent: Box::new(crate::ledger_guard::agent::chaos::ChaosAgent::new(accounts.clone())),
+   |                                        ++++++++++++++
+help: consider importing this struct
+   |
+ 1 + use ledger_guard::agent::chaos::ChaosAgent;
+   |
+help: if you import `ChaosAgent`, refer to it directly
+   |
+70 -                 agent: Box::new(crate::agent::chaos::ChaosAgent::new(accounts.clone())),
+70 +                 agent: Box::new(ChaosAgent::new(accounts.clone())),
+   |
+
+error[E0433]: failed to resolve: unresolved import
+  --> src\main.rs:75:29
+   |
+75 |         let result = crate::stress::StressTest::new(configs, std::time::Duration::from_secs(_stress_duration)).run();
+   |                             ^^^^^^ unresolved import
+   |
+help: a similar path exists
+   |
+75 |         let result = crate::ledger_guard::stress::StressTest::new(configs, std::time::Duration::from_secs(_stress_duration)).run();
+   |                             ++++++++++++++
+help: consider importing this struct
+   |
+ 1 + use ledger_guard::stress::StressTest;
+   |
+help: if you import `StressTest`, refer to it directly
+   |
+75 -         let result = crate::stress::StressTest::new(configs, std::time::Duration::from_secs(_stress_duration)).run();
+75 +         let result = StressTest::new(configs, std::time::Duration::from_secs(_stress_duration)).run();
+   |
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `ledger-guard` (bin "ledger-guard") due to 12 previous errors

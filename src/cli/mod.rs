@@ -1,4 +1,5 @@
 use crate::agent::{Agent, AgentError};
+use crate::ledger::LedgerError;
 use crate::ledger::{Ledger, Transaction};
 use rustyline::{DefaultEditor, error::ReadlineError};
 
@@ -9,8 +10,16 @@ pub struct Cli {
 }
 
 impl Cli {
-    pub fn new(agent: Box<dyn Agent>, data_path: &str) -> Self {
+    pub fn new(agent: Box<dyn Agent>, data_path: &str, default_accounts: &[String]) -> Self {
         let mut ledger = Ledger::new();
+        
+        for acc in default_accounts {
+            match ledger.create_account(acc) {
+                Ok(()) | Err(LedgerError::DuplicateAccount { .. }) => {}
+                Err(e) => eprintln!("Warning: failed to create account '{}': {}", acc, e),
+            }
+        }
+
         match crate::persistence::load(data_path) {
             Ok(history) => {
                 for tx in history {
@@ -79,10 +88,17 @@ impl Cli {
                             }
                         }
                         input if input.starts_with("balance ") => {
-                            let account = input.trim_start_matches("balance ").trim();
-                            match self.ledger.balance(account) {
-                                Some(bal) => println!("${:.2}", bal as f64 / 100.0),
-                                None => println!("Account not found"),
+                            let account_query = input.trim_start_matches("balance ").trim().to_lowercase();
+                            let mut found = false;
+                            for (acc, bal) in self.ledger.accounts() {
+                                if acc.to_lowercase() == account_query {
+                                    println!("${:.2}", bal as f64 / 100.0);
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if !found {
+                                println!("Account not found");
                             }
                         }
                         input => {
@@ -97,7 +113,10 @@ impl Cli {
                     break;
                 }
                 Err(err) => {
-                    println!("Error: {:?}", err);
+                    eprintln!("Readline error: {:?}", err);
+                    if let Err(e) = crate::persistence::save(&self.data_path, self.ledger.history()) {
+                        eprintln!("Failed to save ledger: {}", e);
+                    }
                     break;
                 }
             }

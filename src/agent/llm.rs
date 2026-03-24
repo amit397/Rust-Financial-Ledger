@@ -161,6 +161,8 @@ impl LlmAgent {
     }
 }
 
+/// Intermediate deserialization types for untrusted LLM JSON.
+/// Kept separate from domain types to prevent serde attributes on core ledger types.
 #[derive(serde::Deserialize)]
 struct RawProposal {
     description: String,

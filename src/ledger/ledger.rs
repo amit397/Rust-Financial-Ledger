@@ -105,7 +105,9 @@ impl Ledger {
         for entry in &tx.entries {
             if entry.amount < 0 && entry.account.0 != "External" {
                 let balance = self.accounts.get(&entry.account.0).unwrap();
-                if *balance + entry.amount < 0 {
+                let new_balance = balance.checked_add(entry.amount)
+                    .ok_or(LedgerError::Overflow)?;
+                if new_balance < 0 {
                     return Err(LedgerError::InsufficientFunds {
                         account: entry.account.0.clone(),
                         available: *balance,

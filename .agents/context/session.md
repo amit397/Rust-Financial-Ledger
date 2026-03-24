@@ -1,15 +1,15 @@
 # Session Context — LedgerGuard
 
 ## Last Completed
-Fixed Phase 2 implementaton logic (llm parsing imports and Chaos Agents), implemented Phase 3 (Persistence and CLI).
+Implemented Phase 4 Stress Test framework (`mod.rs`, `metrics.rs`, `report.rs`), wired up `--stress` in `main.rs`, and verified compilation.
 
 ## Current State
 - Phase 2 fully functional and passing all `agent` tests.
 - Phase 3 persistence and rustyline REPL CLI implemented and compiled.
-- Agent tests passing successfully (13/13).
+- Phase 4 stress test architecture established and connected to CLI flags. Missing implementations (`todo!()` stubs) are ready for the developer.
 
 ## Open Follow-ups
-- Phase 4: `pub mod stress;`
+- Phase 4: Implement developer `todo!()` tasks (`StressTest::run`, `agent_thread`, `record_lock_wait`, `record_latency`).
 - Phase 5: Execute overarching stress tests and usage.
 
 ## Decisions Made

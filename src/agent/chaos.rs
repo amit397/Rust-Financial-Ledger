@@ -28,6 +28,9 @@ impl Agent for ValidAgent {
             })
         } else {
             let mut accs = self.accounts.iter().filter(|a| *a != "External").collect::<Vec<_>>();
+            if accs.len() < 2 {
+                return Err(AgentError::ParseFailure("Need at least 2 non-External accounts".into()));
+            }
             accs.shuffle(&mut rng);
             let src = accs[0].to_string();
             let dest = accs[1].to_string();
@@ -195,6 +198,7 @@ impl Agent for ChaosAgent {
         } else if choice < 90 {
             self.unbalanced.propose(input)
         } else {
+            // Intentionally includes zero and extreme values — chaos testing
             Ok(AgentProposal {
                 description: "Garbage".to_string(),
                 entries: vec![
