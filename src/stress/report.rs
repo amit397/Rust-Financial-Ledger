@@ -135,12 +135,17 @@ pub fn verify_invariants(ledger: &Ledger, metrics: &MetricsCollector) -> Vec<Ver
     }
 
     // Check 3 — Transaction count consistency
-    let count = ledger.transaction_count() as u64;
+    // Ledger includes initial funding transactions from StressTest::new.
+    // Count those by finding the first stress-test tx (initial txs have lower IDs).
+    let initial_txs = ledger.history().iter()
+        .take_while(|tx| tx.description.starts_with("Initial funding"))
+        .count() as u64;
+    let stress_count = ledger.transaction_count() as u64 - initial_txs;
     let metrics_commit = metrics.total_committed();
-    if count == metrics_commit {
+    if stress_count == metrics_commit {
         results.push(VerificationResult::Pass("Transaction count matches committed count".to_string()));
     } else {
-        results.push(VerificationResult::Fail(format!("Transaction count mismatch: ledger {}, metrics {}", count, metrics_commit)));
+        results.push(VerificationResult::Fail(format!("Transaction count mismatch: ledger {} (stress only), metrics {}", stress_count, metrics_commit)));
     }
 
     // Check 4 — Replay consistency

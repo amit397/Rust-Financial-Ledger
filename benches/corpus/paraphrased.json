@@ -1,0 +1,302 @@
+[
+  {
+    "id": 101,
+    "category": "paraphrased",
+    "input": "Take $50 out of Payroll for Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 102,
+    "category": "paraphrased",
+    "input": "Pay $20 from External into Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 103,
+    "category": "paraphrased",
+    "input": "Can you shift $10 from Payroll over to Investments?",
+    "expected_valid": true
+  },
+  {
+    "id": 104,
+    "category": "paraphrased",
+    "input": "Transfer 200 from my Expenses to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 105,
+    "category": "paraphrased",
+    "input": "I need to transfer 10 dollars from Checking to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 106,
+    "category": "paraphrased",
+    "input": "Put $5 in Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 107,
+    "category": "paraphrased",
+    "input": "Send 20 to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 108,
+    "category": "paraphrased",
+    "input": "Can you shift $10 from External over to Expenses?",
+    "expected_valid": true
+  },
+  {
+    "id": 109,
+    "category": "paraphrased",
+    "input": "Can you shift $20 from External over to Expenses?",
+    "expected_valid": true
+  },
+  {
+    "id": 110,
+    "category": "paraphrased",
+    "input": "Put $5 in External",
+    "expected_valid": true
+  },
+  {
+    "id": 111,
+    "category": "paraphrased",
+    "input": "Put $10 in External",
+    "expected_valid": true
+  },
+  {
+    "id": 112,
+    "category": "paraphrased",
+    "input": "Put $100 in Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 113,
+    "category": "paraphrased",
+    "input": "I need to transfer 50 dollars from Payroll to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 114,
+    "category": "paraphrased",
+    "input": "Put $100 in External",
+    "expected_valid": true
+  },
+  {
+    "id": 115,
+    "category": "paraphrased",
+    "input": "Can you shift $20 from External over to Payroll?",
+    "expected_valid": true
+  },
+  {
+    "id": 116,
+    "category": "paraphrased",
+    "input": "Take $20 out of External for Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 117,
+    "category": "paraphrased",
+    "input": "Take $10 out of Payroll for Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 118,
+    "category": "paraphrased",
+    "input": "Take $200 out of Savings for Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 119,
+    "category": "paraphrased",
+    "input": "Put $20 in Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 120,
+    "category": "paraphrased",
+    "input": "Transfer 50 from my External to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 121,
+    "category": "paraphrased",
+    "input": "Move 200 bucks to Payroll from Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 122,
+    "category": "paraphrased",
+    "input": "Take $50 out of Checking for Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 123,
+    "category": "paraphrased",
+    "input": "I need to transfer 100 dollars from Checking to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 124,
+    "category": "paraphrased",
+    "input": "Transfer 20 from my Investments to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 125,
+    "category": "paraphrased",
+    "input": "Send 10 to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 126,
+    "category": "paraphrased",
+    "input": "Take $10 out of Payroll for Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 127,
+    "category": "paraphrased",
+    "input": "Take $50 out of Payroll for Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 128,
+    "category": "paraphrased",
+    "input": "Can you shift $10 from Savings over to Investments?",
+    "expected_valid": true
+  },
+  {
+    "id": 129,
+    "category": "paraphrased",
+    "input": "Take $100 out of External for Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 130,
+    "category": "paraphrased",
+    "input": "Send 5 to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 131,
+    "category": "paraphrased",
+    "input": "Put $200 in Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 132,
+    "category": "paraphrased",
+    "input": "Transfer 5 from my External to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 133,
+    "category": "paraphrased",
+    "input": "Transfer 100 from my Investments to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 134,
+    "category": "paraphrased",
+    "input": "Can you shift $100 from Checking over to Expenses?",
+    "expected_valid": true
+  },
+  {
+    "id": 135,
+    "category": "paraphrased",
+    "input": "Can you shift $50 from Savings over to Revenue?",
+    "expected_valid": true
+  },
+  {
+    "id": 136,
+    "category": "paraphrased",
+    "input": "I need to transfer 200 dollars from Expenses to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 137,
+    "category": "paraphrased",
+    "input": "Put $20 in Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 138,
+    "category": "paraphrased",
+    "input": "Transfer 50 from my Investments to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 139,
+    "category": "paraphrased",
+    "input": "Transfer 50 from my Checking to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 140,
+    "category": "paraphrased",
+    "input": "Can you shift $10 from Revenue over to Checking?",
+    "expected_valid": true
+  },
+  {
+    "id": 141,
+    "category": "paraphrased",
+    "input": "Send 20 to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 142,
+    "category": "paraphrased",
+    "input": "Take $100 out of Payroll for Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 143,
+    "category": "paraphrased",
+    "input": "I need to transfer 100 dollars from Checking to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 144,
+    "category": "paraphrased",
+    "input": "Pay $20 from Savings into Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 145,
+    "category": "paraphrased",
+    "input": "Pay $20 from Checking into External",
+    "expected_valid": true
+  },
+  {
+    "id": 146,
+    "category": "paraphrased",
+    "input": "Put $20 in External",
+    "expected_valid": true
+  },
+  {
+    "id": 147,
+    "category": "paraphrased",
+    "input": "Transfer 200 from my Checking to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 148,
+    "category": "paraphrased",
+    "input": "Send 10 to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 149,
+    "category": "paraphrased",
+    "input": "Can you shift $200 from Checking over to Expenses?",
+    "expected_valid": true
+  },
+  {
+    "id": 150,
+    "category": "paraphrased",
+    "input": "I need to transfer 100 dollars from Savings to External",
+    "expected_valid": true
+  }
+]

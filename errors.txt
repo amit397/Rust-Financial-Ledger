@@ -1,0 +1,87 @@
+﻿cargo :     Checking ledger-guard v0.1.0 
+(C:\Users\User\Desktop\Rust-Financial-Ledger)
+At line:1 char:1
++ cargo check --tests 2>&1 | Out-File -FilePath errors.txt 
+-Encoding ut ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (    Checking le.. 
+   .nancial-Ledger):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: field `accounts` is never read
+   --> src\agent\chaos.rs:172:5
+    |
+166 | pub struct ChaosAgent {
+    |            ---------- field in this struct
+...
+172 |     accounts: Vec<String>,
+    |     ^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) 
+on by default
+
+warning: `ledger-guard` (lib) generated 1 warning
+warning: `ledger-guard` (lib test) generated 1 warning (1 
+duplicate)
+warning: unused imports: `AgentError` and `AgentProposal`
+ --> tests\ledger_integration.rs:2:27
+  |
+2 | use ledger_guard::agent::{AgentProposal, AgentError, 
+Agent};
+  |                           ^^^^^^^^^^^^^  ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of 
+`#[warn(unused)]`) on by default
+
+error[E0599]: no function or associated item named `new` found 
+for struct `MockAgent` in the current scope
+  --> tests\ledger_integration.rs:26:28
+   |
+26 |     let agent = MockAgent::new(vec!["Checking".into(), 
+"Savings".into(), "External".into()]);
+   |                            ^^^ function or associated 
+item not found in `MockAgent`
+
+error[E0599]: no function or associated item named `new` found 
+for struct `MockAgent` in the current scope
+  --> tests\ledger_integration.rs:37:28
+   |
+37 |     let agent = MockAgent::new(vec!["Checking".into(), 
+"Savings".into(), "External".into()]);
+   |                            ^^^ function or associated 
+item not found in `MockAgent`
+
+error[E0599]: no function or associated item named `new` found 
+for struct `MockAgent` in the current scope
+   --> tests\ledger_integration.rs:103:28
+    |
+103 |     let agent = MockAgent::new(vec!["Checking".into(), 
+"Savings".into(), "External".into()]);
+    |                            ^^^ function or associated 
+item not found in `MockAgent`
+
+error[E0599]: no function or associated item named `new` found 
+for struct `MockAgent` in the current scope
+   --> tests\ledger_integration.rs:136:28
+    |
+136 |     let agent = MockAgent::new(vec!["Checking".into(), 
+"Savings".into(), "External".into()]);
+    |                            ^^^ function or associated 
+item not found in `MockAgent`
+
+error[E0599]: no function or associated item named `new` found 
+for struct `MockAgent` in the current scope
+   --> tests\ledger_integration.rs:161:28
+    |
+161 |     let agent = MockAgent::new(vec!["Checking".into(), 
+"Savings".into(), "External".into()]);
+    |                            ^^^ function or associated 
+item not found in `MockAgent`
+
+For more information about this error, try `rustc --explain 
+E0599`.
+warning: `ledger-guard` (test "ledger_integration") generated 
+1 warning
+error: could not compile `ledger-guard` (test 
+"ledger_integration") due to 5 previous errors; 1 warning 
+emitted

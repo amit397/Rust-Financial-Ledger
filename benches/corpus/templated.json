@@ -1,0 +1,602 @@
+[
+  {
+    "id": 1,
+    "category": "templated",
+    "input": "Transfer $5.00 from External to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 2,
+    "category": "templated",
+    "input": "Transfer $100.00 from Payroll to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 3,
+    "category": "templated",
+    "input": "Transfer $75.00 from External to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 4,
+    "category": "templated",
+    "input": "Transfer $1.50 from Investments to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 5,
+    "category": "templated",
+    "input": "Transfer $25.00 from Checking to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 6,
+    "category": "templated",
+    "input": "Transfer $1.50 from Expenses to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 7,
+    "category": "templated",
+    "input": "Transfer $50.00 from Revenue to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 8,
+    "category": "templated",
+    "input": "Transfer $20.00 from Checking to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 9,
+    "category": "templated",
+    "input": "Transfer $75.00 from External to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 10,
+    "category": "templated",
+    "input": "Transfer $10.00 from Savings to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 11,
+    "category": "templated",
+    "input": "Transfer $50.00 from Investments to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 12,
+    "category": "templated",
+    "input": "Transfer $20.00 from Payroll to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 13,
+    "category": "templated",
+    "input": "Transfer $100.00 from Payroll to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 14,
+    "category": "templated",
+    "input": "Transfer $25.00 from Revenue to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 15,
+    "category": "templated",
+    "input": "Transfer $5.00 from Checking to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 16,
+    "category": "templated",
+    "input": "Transfer $75.00 from Investments to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 17,
+    "category": "templated",
+    "input": "Transfer $50.00 from Investments to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 18,
+    "category": "templated",
+    "input": "Transfer $10.00 from Payroll to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 19,
+    "category": "templated",
+    "input": "Transfer $1.50 from Checking to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 20,
+    "category": "templated",
+    "input": "Transfer $12.50 from Checking to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 21,
+    "category": "templated",
+    "input": "Transfer $25.00 from Revenue to External",
+    "expected_valid": true
+  },
+  {
+    "id": 22,
+    "category": "templated",
+    "input": "Transfer $200.00 from Expenses to External",
+    "expected_valid": true
+  },
+  {
+    "id": 23,
+    "category": "templated",
+    "input": "Transfer $200.00 from Expenses to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 24,
+    "category": "templated",
+    "input": "Transfer $12.50 from External to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 25,
+    "category": "templated",
+    "input": "Transfer $20.00 from Revenue to External",
+    "expected_valid": true
+  },
+  {
+    "id": 26,
+    "category": "templated",
+    "input": "Transfer $150.00 from Payroll to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 27,
+    "category": "templated",
+    "input": "Transfer $100.00 from Savings to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 28,
+    "category": "templated",
+    "input": "Transfer $5.00 from External to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 29,
+    "category": "templated",
+    "input": "Transfer $50.00 from Investments to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 30,
+    "category": "templated",
+    "input": "Transfer $5.00 from Investments to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 31,
+    "category": "templated",
+    "input": "Transfer $100.00 from Payroll to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 32,
+    "category": "templated",
+    "input": "Transfer $100.00 from Investments to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 33,
+    "category": "templated",
+    "input": "Transfer $25.00 from Checking to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 34,
+    "category": "templated",
+    "input": "Transfer $1.50 from Payroll to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 35,
+    "category": "templated",
+    "input": "Transfer $5.00 from Savings to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 36,
+    "category": "templated",
+    "input": "Transfer $1.50 from Revenue to External",
+    "expected_valid": true
+  },
+  {
+    "id": 37,
+    "category": "templated",
+    "input": "Transfer $200.00 from Checking to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 38,
+    "category": "templated",
+    "input": "Transfer $150.00 from Investments to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 39,
+    "category": "templated",
+    "input": "Transfer $0.01 from Checking to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 40,
+    "category": "templated",
+    "input": "Transfer $20.00 from Savings to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 41,
+    "category": "templated",
+    "input": "Transfer $200.00 from Expenses to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 42,
+    "category": "templated",
+    "input": "Transfer $5.00 from Checking to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 43,
+    "category": "templated",
+    "input": "Transfer $1.50 from Checking to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 44,
+    "category": "templated",
+    "input": "Transfer $150.00 from Savings to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 45,
+    "category": "templated",
+    "input": "Transfer $12.50 from Payroll to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 46,
+    "category": "templated",
+    "input": "Transfer $10.00 from Investments to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 47,
+    "category": "templated",
+    "input": "Transfer $200.00 from Revenue to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 48,
+    "category": "templated",
+    "input": "Transfer $100.00 from External to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 49,
+    "category": "templated",
+    "input": "Transfer $1.50 from External to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 50,
+    "category": "templated",
+    "input": "Transfer $100.00 from Savings to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 51,
+    "category": "templated",
+    "input": "Transfer $25.00 from Payroll to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 52,
+    "category": "templated",
+    "input": "Transfer $200.00 from External to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 53,
+    "category": "templated",
+    "input": "Transfer $12.50 from Investments to External",
+    "expected_valid": true
+  },
+  {
+    "id": 54,
+    "category": "templated",
+    "input": "Transfer $150.00 from Payroll to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 55,
+    "category": "templated",
+    "input": "Transfer $200.00 from Savings to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 56,
+    "category": "templated",
+    "input": "Transfer $50.00 from Checking to External",
+    "expected_valid": true
+  },
+  {
+    "id": 57,
+    "category": "templated",
+    "input": "Transfer $25.00 from Savings to External",
+    "expected_valid": true
+  },
+  {
+    "id": 58,
+    "category": "templated",
+    "input": "Transfer $1.50 from Expenses to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 59,
+    "category": "templated",
+    "input": "Transfer $5.00 from Expenses to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 60,
+    "category": "templated",
+    "input": "Transfer $50.00 from Savings to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 61,
+    "category": "templated",
+    "input": "Transfer $75.00 from Payroll to External",
+    "expected_valid": true
+  },
+  {
+    "id": 62,
+    "category": "templated",
+    "input": "Transfer $5.00 from Revenue to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 63,
+    "category": "templated",
+    "input": "Transfer $0.01 from Expenses to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 64,
+    "category": "templated",
+    "input": "Transfer $200.00 from Checking to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 65,
+    "category": "templated",
+    "input": "Transfer $5.00 from Savings to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 66,
+    "category": "templated",
+    "input": "Transfer $20.00 from Expenses to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 67,
+    "category": "templated",
+    "input": "Transfer $75.00 from Payroll to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 68,
+    "category": "templated",
+    "input": "Transfer $75.00 from Checking to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 69,
+    "category": "templated",
+    "input": "Transfer $1.50 from Investments to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 70,
+    "category": "templated",
+    "input": "Transfer $150.00 from Revenue to External",
+    "expected_valid": true
+  },
+  {
+    "id": 71,
+    "category": "templated",
+    "input": "Transfer $1.50 from Checking to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 72,
+    "category": "templated",
+    "input": "Transfer $10.00 from Expenses to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 73,
+    "category": "templated",
+    "input": "Transfer $12.50 from External to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 74,
+    "category": "templated",
+    "input": "Transfer $50.00 from External to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 75,
+    "category": "templated",
+    "input": "Transfer $100.00 from Payroll to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 76,
+    "category": "templated",
+    "input": "Transfer $10.00 from Payroll to External",
+    "expected_valid": true
+  },
+  {
+    "id": 77,
+    "category": "templated",
+    "input": "Transfer $150.00 from Investments to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 78,
+    "category": "templated",
+    "input": "Transfer $100.00 from Payroll to External",
+    "expected_valid": true
+  },
+  {
+    "id": 79,
+    "category": "templated",
+    "input": "Transfer $25.00 from External to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 80,
+    "category": "templated",
+    "input": "Transfer $1.50 from External to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 81,
+    "category": "templated",
+    "input": "Transfer $50.00 from Expenses to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 82,
+    "category": "templated",
+    "input": "Transfer $75.00 from Expenses to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 83,
+    "category": "templated",
+    "input": "Transfer $5.00 from Checking to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 84,
+    "category": "templated",
+    "input": "Transfer $10.00 from Investments to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 85,
+    "category": "templated",
+    "input": "Transfer $100.00 from Investments to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 86,
+    "category": "templated",
+    "input": "Transfer $0.01 from External to Revenue",
+    "expected_valid": true
+  },
+  {
+    "id": 87,
+    "category": "templated",
+    "input": "Transfer $25.00 from External to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 88,
+    "category": "templated",
+    "input": "Transfer $1.50 from External to Checking",
+    "expected_valid": true
+  },
+  {
+    "id": 89,
+    "category": "templated",
+    "input": "Transfer $50.00 from Expenses to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 90,
+    "category": "templated",
+    "input": "Transfer $0.01 from Investments to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 91,
+    "category": "templated",
+    "input": "Transfer $150.00 from Expenses to Investments",
+    "expected_valid": true
+  },
+  {
+    "id": 92,
+    "category": "templated",
+    "input": "Transfer $10.00 from Checking to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 93,
+    "category": "templated",
+    "input": "Transfer $100.00 from Revenue to External",
+    "expected_valid": true
+  },
+  {
+    "id": 94,
+    "category": "templated",
+    "input": "Transfer $0.01 from Checking to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 95,
+    "category": "templated",
+    "input": "Transfer $75.00 from Savings to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 96,
+    "category": "templated",
+    "input": "Transfer $50.00 from Revenue to Payroll",
+    "expected_valid": true
+  },
+  {
+    "id": 97,
+    "category": "templated",
+    "input": "Transfer $5.00 from Revenue to Expenses",
+    "expected_valid": true
+  },
+  {
+    "id": 98,
+    "category": "templated",
+    "input": "Transfer $1.50 from Savings to External",
+    "expected_valid": true
+  },
+  {
+    "id": 99,
+    "category": "templated",
+    "input": "Transfer $12.50 from Checking to Savings",
+    "expected_valid": true
+  },
+  {
+    "id": 100,
+    "category": "templated",
+    "input": "Transfer $100.00 from External to Savings",
+    "expected_valid": true
+  }
+]

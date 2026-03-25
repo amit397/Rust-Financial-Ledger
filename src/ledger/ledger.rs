@@ -103,10 +103,10 @@ impl Ledger {
         }
 
         for entry in &tx.entries {
+            let balance = self.accounts.get(&entry.account.0).unwrap();
+            let new_balance = balance.checked_add(entry.amount)
+                .ok_or(LedgerError::Overflow)?;
             if entry.amount < 0 && entry.account.0 != "External" {
-                let balance = self.accounts.get(&entry.account.0).unwrap();
-                let new_balance = balance.checked_add(entry.amount)
-                    .ok_or(LedgerError::Overflow)?;
                 if new_balance < 0 {
                     return Err(LedgerError::InsufficientFunds {
                         account: entry.account.0.clone(),
@@ -729,4 +729,56 @@ mod tests {
         let total: i64 = ledger.accounts().iter().map(|(_, b)| b).sum();
         assert_eq!(total, 0);
     }
+
+    // ── Property-based test (proptest) ─────────────────────────────────────────
+    // Add to Cargo.toml [dev-dependencies]: proptest = "1"  (already present)
+
+    // UNIMPLEMENTED — Developer task (property-based testing with proptest)
+    //
+    // WHAT IS PROPERTY-BASED TESTING?
+    //   Unit tests check specific cases: "input X gives output Y."
+    //   Property tests check invariants over RANDOM inputs: "for ALL valid inputs,
+    //   property P holds." The framework (proptest) generates hundreds of random
+    //   inputs, trying to falsify P. It finds edge cases no human would think to test.
+    //
+    // THE PROPERTY TO TEST — Replay Consistency:
+    //   For any sequence of valid transactions applied to a ledger:
+    //   applying them in order produces the same balances as replaying the event log
+    //   on a second fresh ledger.
+    //
+    //   In other words: the balance HashMap and the event log Vec<Transaction>
+    //   NEVER diverge. If they do, the ledger is lying — showing $500 available
+    //   when the event log only supports $200. Critical correctness bug.
+    //
+    // HOW TO WRITE THE STRATEGY (valid_balanced_entries):
+    //   Use proptest macros to generate: a Vec of (from_account, to_account, amount_cents)
+    //   where from_account and to_account are sampled from a fixed list,
+    //   from_account != to_account, and amount_cents is in 1..=10_000.
+    //   Convert each to a two-entry balanced Transaction.
+    //
+    //   proptest! {
+    //       #[test]
+    //       fn replay_consistency(txs in valid_transaction_sequence()) {
+    //           let mut ledger = make_test_ledger(); // fresh ledger with known accounts
+    //           let mut applied = Vec::new();
+    //           for tx in txs {
+    //               if ledger.apply(tx).is_ok() {
+    //                   applied.push(()); // track that it committed
+    //               }
+    //               // Skip failures (insufficient funds at random order) — that's OK
+    //           }
+    //           // Now replay
+    //           let mut replay = make_test_ledger();
+    //           for tx in ledger.history() {
+    //               replay.apply(tx.clone()).expect("Replay of committed tx must not fail");
+    //           }
+    //           // Assert identical balances
+    //           assert_eq!(ledger.accounts(), replay.accounts(),
+    //               "Balance cache diverged from event log after {} transactions",
+    //               ledger.transaction_count());
+    //       }
+    //   }
+    //
+    // TO RUN: cargo test replay_consistency
+    // See proptest docs: https://docs.rs/proptest/latest/proptest/
 }

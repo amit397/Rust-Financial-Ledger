@@ -1,0 +1,164 @@
+[
+  {
+    "id": 151,
+    "category": "adversarial",
+    "input": "Transfer -$10 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 152,
+    "category": "adversarial",
+    "input": "Transfer -$22 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 153,
+    "category": "adversarial",
+    "input": "Transfer -$46 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 154,
+    "category": "adversarial",
+    "input": "Transfer -$42 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 155,
+    "category": "adversarial",
+    "input": "Transfer -$18 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 156,
+    "category": "adversarial",
+    "input": "Transfer $20 from Checking to Ghost",
+    "expected_valid": false
+  },
+  {
+    "id": 157,
+    "category": "adversarial",
+    "input": "Transfer $20 from Checking to Void",
+    "expected_valid": false
+  },
+  {
+    "id": 158,
+    "category": "adversarial",
+    "input": "Transfer $20 from Checking to Nowhere",
+    "expected_valid": false
+  },
+  {
+    "id": 159,
+    "category": "adversarial",
+    "input": "Transfer $20 from Checking to Magic",
+    "expected_valid": false
+  },
+  {
+    "id": 160,
+    "category": "adversarial",
+    "input": "Transfer $20 from Checking to Secret",
+    "expected_valid": false
+  },
+  {
+    "id": 161,
+    "category": "adversarial",
+    "input": "Transfer $0 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 162,
+    "category": "adversarial",
+    "input": "Transfer $0 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 163,
+    "category": "adversarial",
+    "input": "Transfer $0 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 164,
+    "category": "adversarial",
+    "input": "move money",
+    "expected_valid": false
+  },
+  {
+    "id": 165,
+    "category": "adversarial",
+    "input": "pay rent",
+    "expected_valid": false
+  },
+  {
+    "id": 166,
+    "category": "adversarial",
+    "input": "undo last",
+    "expected_valid": false
+  },
+  {
+    "id": 167,
+    "category": "adversarial",
+    "input": "Transfer $99999999999999 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 168,
+    "category": "adversarial",
+    "input": "Transfer $99999999999999 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 169,
+    "category": "adversarial",
+    "input": "Transfer $99999999999999 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 170,
+    "category": "adversarial",
+    "input": "Transfer $50 from Checking to Checking",
+    "expected_valid": false
+  },
+  {
+    "id": 171,
+    "category": "adversarial",
+    "input": "Transfer $50 from Checking to Checking",
+    "expected_valid": false
+  },
+  {
+    "id": 172,
+    "category": "adversarial",
+    "input": "Transfer $50 from Checking to Checking",
+    "expected_valid": false
+  },
+  {
+    "id": 173,
+    "category": "adversarial",
+    "input": "transfer $abc from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 174,
+    "category": "adversarial",
+    "input": "transfer 50 from Checking to Savings",
+    "expected_valid": false
+  },
+  {
+    "id": 175,
+    "category": "adversarial",
+    "input": "transfer $50.0.0 from Checking to Savings",
+    "expected_valid": false
+  }
+]
+// DEVELOPER TASK: Add 25 more adversarial cases (entries 26-50).
+// Think about financial-system-specific edge cases:
+//   - Currency confusion ("transfer $50 EUR to Checking")
+//   - Future-dated requests ("transfer $100 next Tuesday")
+//   - SQL/injection attempts ("transfer $50 from Checking'; DROP TABLE--")
+//   - Unicode in amounts ("transfer $５０ from Checking to Savings")
+//   - Amounts just under i64::MAX in cents (valid format, overflow in arithmetic)
+//   - Repeated identical transactions (ledger should handle idempotency gracefully)
+//   - Whitespace-only input, empty string, single character
+//   - Mixed valid/invalid in one sentence ("transfer $50 and undo last")
+// For each: specify what you EXPECT to fail (parse, Transaction::new, or Ledger::apply)
+// and why. This analysis is more important than the test case itself.

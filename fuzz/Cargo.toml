@@ -1,0 +1,15 @@
+[package]
+name = "ledger-guard-fuzz"
+version = "0.0.1"
+edition = "2021"
+publish = false
+
+[dependencies]
+libfuzzer-sys = "0.4"
+ledger-guard = { path = ".." }
+
+[[bin]]
+name = "fuzz_transaction"
+path = "fuzz_targets/fuzz_transaction.rs"
+test = false
+doc = false

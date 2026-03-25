@@ -1,0 +1,202 @@
+    Checking ledger-guard v0.1.0 (C:\Users\User\Desktop\rust-financial-ledger)
+error[E0425]: cannot find value `stop_signal` in this scope
+   --> src\stress\mod.rs:121:12
+    |
+118 |     _stop_signal: Arc<AtomicBool>,
+    |     ------------ `_stop_signal` defined here
+...
+121 |     while !stop_signal.load(Ordering::Relaxed) {
+    |            ^^^^^^^^^^^
+    |
+help: the leading underscore in `_stop_signal` marks it as unused, consider renaming it to `stop_signal`
+    |
+118 -     _stop_signal: Arc<AtomicBool>,
+118 +     stop_signal: Arc<AtomicBool>,
+    |
+
+error[E0425]: cannot find value `agent` in this scope
+   --> src\stress\mod.rs:127:19
+    |
+116 |     _agent: Box<dyn Agent + Send>,
+    |     ------ `_agent` defined here
+...
+127 |             match agent.propose("") {
+    |                   ^^^^^
+    |
+help: the leading underscore in `_agent` marks it as unused, consider renaming it to `agent`
+    |
+116 -     _agent: Box<dyn Agent + Send>,
+116 +     agent: Box<dyn Agent + Send>,
+    |
+
+error[E0425]: cannot find value `ledger` in this scope
+   --> src\stress\mod.rs:133:45
+    |
+115 |     _ledger: Arc<Mutex<Ledger>>,
+    |     ------- `_ledger` defined here
+...
+133 |                             let mut guard = ledger.lock()
+    |                                             ^^^^^^
+    |
+help: the leading underscore in `_ledger` marks it as unused, consider renaming it to `ledger`
+    |
+115 -     _ledger: Arc<Mutex<Ledger>>,
+115 +     ledger: Arc<Mutex<Ledger>>,
+    |
+
+error[E0425]: cannot find value `agent_id` in this scope
+   --> src\stress\mod.rs:136:54
+    |
+119 |     _agent_id: usize,
+    |     --------- `_agent_id` defined here
+...
+136 |                            _metrics.record_lock_wait(agent_id, lock_start.elapsed());
+    |                                                      ^^^^^^^^
+    |
+help: the leading underscore in `_agent_id` marks it as unused, consider renaming it to `agent_id`
+    |
+119 -     _agent_id: usize,
+119 +     agent_id: usize,
+    |
+
+error[E0425]: cannot find value `agent_id` in this scope
+   --> src\stress\mod.rs:139:65
+    |
+119 |     _agent_id: usize,
+    |     --------- `_agent_id` defined here
+...
+139 |                                 Ok(()) =>_metrics.record_commit(agent_id),
+    |                                                                 ^^^^^^^^
+    |
+help: the leading underscore in `_agent_id` marks it as unused, consider renaming it to `agent_id`
+    |
+119 -     _agent_id: usize,
+119 +     agent_id: usize,
+    |
+
+error[E0425]: cannot find value `agent_id` in this scope
+   --> src\stress\mod.rs:140:68
+    |
+119 |     _agent_id: usize,
+    |     --------- `_agent_id` defined here
+...
+140 |                                 Err(e) =>_metrics.record_rejection(agent_id, &e),
+    |                                                                    ^^^^^^^^
+    |
+help: the leading underscore in `_agent_id` marks it as unused, consider renaming it to `agent_id`
+    |
+119 -     _agent_id: usize,
+119 +     agent_id: usize,
+    |
+
+error[E0425]: cannot find value `agent_id` in this scope
+   --> src\stress\mod.rs:143:71
+    |
+119 |     _agent_id: usize,
+    |     --------- `_agent_id` defined here
+...
+143 |                         Err(e) =>_metrics.record_construction_failure(agent_id, &e),
+    |                                                                       ^^^^^^^^
+    |
+help: the leading underscore in `_agent_id` marks it as unused, consider renaming it to `agent_id`
+    |
+119 -     _agent_id: usize,
+119 +     agent_id: usize,
+    |
+
+error[E0425]: cannot find value `agent_id` in this scope
+   --> src\stress\mod.rs:146:56
+    |
+119 |     _agent_id: usize,
+    |     --------- `_agent_id` defined here
+...
+146 |                 Err(e) =>_metrics.record_parse_failure(agent_id, &e),
+    |                                                        ^^^^^^^^
+    |
+help: the leading underscore in `_agent_id` marks it as unused, consider renaming it to `agent_id`
+    |
+119 -     _agent_id: usize,
+119 +     agent_id: usize,
+    |
+
+error[E0425]: cannot find value `agent_id` in this scope
+   --> src\stress\mod.rs:150:36
+    |
+119 |     _agent_id: usize,
+    |     --------- `_agent_id` defined here
+...
+150 |            _metrics.record_latency(agent_id, start.elapsed());
+    |                                    ^^^^^^^^
+    |
+help: the leading underscore in `_agent_id` marks it as unused, consider renaming it to `agent_id`
+    |
+119 -     _agent_id: usize,
+119 +     agent_id: usize,
+    |
+
+error[E0425]: cannot find value `agent_id` in this scope
+   --> src\stress\mod.rs:151:38
+    |
+119 |     _agent_id: usize,
+    |     --------- `_agent_id` defined here
+...
+151 |             _metrics.increment_total(agent_id);
+    |                                      ^^^^^^^^
+    |
+help: the leading underscore in `_agent_id` marks it as unused, consider renaming it to `agent_id`
+    |
+119 -     _agent_id: usize,
+119 +     agent_id: usize,
+    |
+
+error[E0425]: cannot find value `agent_id` in this scope
+   --> src\stress\mod.rs:156:34
+    |
+119 |     _agent_id: usize,
+    |     --------- `_agent_id` defined here
+...
+156 |            _metrics.record_panic(agent_id);
+    |                                  ^^^^^^^^
+    |
+help: the leading underscore in `_agent_id` marks it as unused, consider renaming it to `agent_id`
+    |
+119 -     _agent_id: usize,
+119 +     agent_id: usize,
+    |
+
+error[E0425]: cannot find value `agent` in this scope
+   --> src\stress\mod.rs:127:19
+    |
+116 |     _agent: Box<dyn Agent + Send>,
+    |     ------ `_agent` defined here
+...
+127 |             match agent.propose("") {
+    |                   ^^^^^
+    |
+note: function `crate::agent::mock::tests::agent` exists but is inaccessible
+   --> src\agent\mock.rs:113:5
+    |
+113 |     fn agent() -> MockAgent {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^ not accessible
+help: the leading underscore in `_agent` marks it as unused, consider renaming it to `agent`
+    |
+116 -     _agent: Box<dyn Agent + Send>,
+116 +     agent: Box<dyn Agent + Send>,
+    |
+
+error[E0282]: type annotations needed
+   --> src\stress\mod.rs:134:50
+    |
+134 | ...                   .unwrap_or_else(|p| p.into_inner()); // Poison recovery
+    |                                        ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+134 |                                 .unwrap_or_else(|p: /* Type */| p.into_inner()); // Poison recovery
+    |                                                   ++++++++++++
+
+Some errors have detailed explanations: E0282, E0425.
+For more information about an error, try `rustc --explain E0282`.
+error: could not compile `ledger-guard` (lib) due to 12 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `ledger-guard` (lib test) due to 12 previous errors

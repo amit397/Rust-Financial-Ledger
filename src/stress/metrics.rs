@@ -175,35 +175,10 @@ impl MetricsCollector {
     }
 
     pub fn record_lock_wait(&self, agent_id: usize, duration: Duration) {
-        // UNIMPLEMENTED — Developer task
-        //
-        // WHY ATOMIC INSTEAD OF MUTEX HERE?
-        //   This method is called on EVERY lock acquisition — potentially thousands of
-        //   times per second per thread. If we used Mutex<u64> to protect the counter,
-        //   we'd acquire a lock in order to measure lock contention — introducing MORE
-        //   contention in the act of measuring it. That's circular and self-defeating.
-        //
-        //   AtomicU64::fetch_add compiles to a single LOCK XADD instruction on x86-64.
-        //   No OS involvement, no thread context switch, no scheduler interaction.
-        //   It's a single CPU cycle with a cache coherence protocol update.
-        //
-        // WHY Ordering::Relaxed?
-        //   Memory orderings control the visibility of OTHER memory operations relative
-        //   to this one (the "happens-before" relationship across threads).
-        //   We only need this counter to be atomically correct on its own — we don't
-        //   need any ordering guarantee between lock_wait_ns and total_proposals.
-        //   Relaxed = "just make this fetch_add atomic, nothing else." Fastest option.
-        //   SeqCst would be correct but inserts a full memory barrier — unnecessary overhead.
-        //
-        //   Rule of thumb: use Relaxed for independent counters, Acquire/Release for
-        //   producer-consumer patterns, SeqCst only when you need a global total order.
-        //
-        // IMPLEMENTATION (2 lines):
-        //   self.lock_wait_ns[agent_id].fetch_add(
-        //       duration.as_nanos() as u64,
-        //       Ordering::Relaxed
-        //   );
-        todo!("record_lock_wait: fetch_add nanos into lock_wait_ns[agent_id] with Relaxed ordering")
+        self.lock_wait_ns[agent_id].fetch_add(
+            duration.as_nanos() as u64,
+            Ordering::Relaxed,
+        );
     }
 
     pub fn record_latency(&self, _agent_id: usize, duration: Duration) {
@@ -261,16 +236,79 @@ impl MetricsCollector {
         //       }
         //       // else: do nothing — no lock acquired, zero cost
         //   }
-        todo!("record_latency: implement Algorithm R reservoir sampling — read the proof above first")
+        let count = self.latency_count.fetch_add(1, Ordering::Relaxed);
+        if (count as usize) < RESERVOIR_CAP {
+            self.latencies.lock().unwrap_or_else(|p| p.into_inner()).push(duration);
+        } else {
+            let j = rand::random::<u64>() % (count + 1);
+
+            if (j as usize) < RESERVOIR_CAP {
+                self.latencies.lock().unwrap_or_else(|p| p.into_inner())[j as usize] = duration;
+            }
+        }
+
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
-    // test_commit_increments: record_commit 1000 times from one thread → total_committed == 1000
-    // test_rejection_breakdown: record_rejection for each LedgerError variant → correct counter
-    // test_reservoir_cap: record_latency 20_000 times → latencies.lock().len() == RESERVOIR_CAP
-    // test_per_agent_isolation: two agent_ids, increment each separately, verify no cross-contamination
+
+    #[test]
+    fn test_commit_increments() {
+        let mc = MetricsCollector::new(1, vec!["A".into()]);
+        for _ in 0..1000 {
+            mc.record_commit(0);
+        }
+        assert_eq!(mc.total_committed.load(Ordering::Relaxed), 1000);
+        assert_eq!(mc.per_agent[0].committed.load(Ordering::Relaxed), 1000);
+    }
+
+    #[test]
+    fn test_rejection_breakdown() {
+        let mc = MetricsCollector::new(1, vec!["A".into()]);
+
+        mc.record_rejection(0, &LedgerError::InsufficientFunds {
+            account: "X".into(), available: 0, requested: 1,
+        });
+        mc.record_rejection(0, &LedgerError::AccountNotFound { name: "X".into() });
+        mc.record_rejection(0, &LedgerError::Unbalanced { actual_sum: 1 });
+        mc.record_rejection(0, &LedgerError::Overflow);
+
+        assert_eq!(mc.rejected_insufficient.load(Ordering::Relaxed), 1);
+        assert_eq!(mc.rejected_not_found.load(Ordering::Relaxed), 1);
+        assert_eq!(mc.rejected_unbalanced.load(Ordering::Relaxed), 1);
+        assert_eq!(mc.rejected_overflow.load(Ordering::Relaxed), 1);
+        assert_eq!(mc.total_rejected.load(Ordering::Relaxed), 4);
+    }
+
+    #[test]
+    fn test_reservoir_cap() {
+        let mc = MetricsCollector::new(1, vec!["A".into()]);
+        for _ in 0..20_000 {
+            mc.record_latency(0, Duration::from_micros(100));
+        }
+        let latencies = mc.latencies.lock().unwrap();
+        assert_eq!(latencies.len(), RESERVOIR_CAP);
+    }
+
+    #[test]
+    fn test_per_agent_isolation() {
+        let mc = MetricsCollector::new(2, vec!["A".into(), "B".into()]);
+
+        for _ in 0..50 {
+            mc.record_commit(0);
+            mc.increment_total(0);
+        }
+        for _ in 0..30 {
+            mc.record_commit(1);
+            mc.increment_total(1);
+        }
+
+        assert_eq!(mc.per_agent[0].committed.load(Ordering::Relaxed), 50);
+        assert_eq!(mc.per_agent[0].proposed.load(Ordering::Relaxed), 50);
+        assert_eq!(mc.per_agent[1].committed.load(Ordering::Relaxed), 30);
+        assert_eq!(mc.per_agent[1].proposed.load(Ordering::Relaxed), 30);
+    }
 }
+

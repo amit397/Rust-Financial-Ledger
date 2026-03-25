@@ -1,0 +1,29 @@
+﻿warning: field `accounts` is never read
+   --> src\agent\chaos.rs:172:5
+    |
+166 | pub struct ChaosAgent {
+    |            ---------- field in this struct
+...
+172 |     accounts: Vec<String>,
+    |     ^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+System.Management.Automation.RemoteException
+warning: `ledger-guard` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.52s
+     Running tests\ledger_integration.rs (target\debug\deps\ledger_integration-6a8e4ae569454381.exe)
+
+running 10 tests
+test overflow_entries_rejected ... ok
+test transaction_ids_autoincrement ... ok
+test external_can_go_negative ... ok
+test valid_transfer_updates_balances ... ok
+test overdraft_rejected_balances_unchanged ... ok
+test replay_consistency ... ok
+test nonexistent_account_rejected ... ok
+test zero_amount_entry_rejected ... ok
+test unbalanced_entries_rejected ... ok
+test persistence_round_trip ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
