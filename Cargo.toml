@@ -7,6 +7,14 @@ edition = "2021"
 name = "ledger-guard"
 path = "src/main.rs"
 
+[[bin]]
+name = "eval"
+path = "src/bin/eval.rs"
+
+[[bin]]
+name = "showcase"
+path = "src/bin/showcase.rs"
+
 [dependencies]
 # Your existing crates
 serde = { version = "1", features = ["derive"] }
@@ -15,9 +23,6 @@ rustyline = "14"
 rand = "0.9"
 ctrlc = "3.4"
 
-# llm agent
-mistralrs = "0.7"
-tokio = { version = "1", features = ["full"] }
 
 [dev-dependencies]
 proptest = "1"

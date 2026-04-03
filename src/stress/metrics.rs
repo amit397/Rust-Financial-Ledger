@@ -14,6 +14,12 @@ pub struct AgentAtomicMetrics {
     pub panics: AtomicU64,
 }
 
+impl Default for AgentAtomicMetrics {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AgentAtomicMetrics {
     pub fn new() -> Self {
         Self {

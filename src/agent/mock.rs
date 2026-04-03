@@ -84,7 +84,10 @@ fn parse_dollars(s: &str) -> Result<i64, AgentError> {
         }
         cents = cent_str.parse().map_err(|_| AgentError::ParseFailure("Invalid amount".to_string()))?;
     }
-    Ok(dollars * 100 + cents)
+    dollars
+        .checked_mul(100)
+        .and_then(|d| d.checked_add(cents))
+        .ok_or_else(|| AgentError::ParseFailure("Amount too large".to_string()))
 }
 
 fn find_account(known: &[String], target: &str) -> String {

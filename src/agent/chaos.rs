@@ -169,7 +169,6 @@ pub struct ChaosAgent {
     typo: TypoAgent,
     overflow: OverflowAgent,
     unbalanced: UnbalancedAgent,
-    accounts: Vec<String>,
 }
 impl ChaosAgent {
     pub fn new(accounts: Vec<String>) -> Self {
@@ -179,7 +178,6 @@ impl ChaosAgent {
             typo: TypoAgent::new(accounts.clone()),
             overflow: OverflowAgent::new(accounts.clone()),
             unbalanced: UnbalancedAgent::new(accounts.clone()),
-            accounts,
         }
     }
 }
