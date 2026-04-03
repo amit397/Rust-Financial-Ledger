@@ -1,0 +1,34 @@
+{
+  "by_category": {
+    "templated": {
+      "total": 100,
+      "parse_success": 100,
+      "ledger_committed": 80,
+      "ledger_correctly_rejected": 20,
+      "false_negatives": 0,
+      "false_positives": 0,
+      "p50_latency_ms": 0.0015999999999999999,
+      "p95_latency_ms": 0.0034000000000000002
+    },
+    "adversarial": {
+      "total": 50,
+      "parse_success": 13,
+      "ledger_committed": 4,
+      "ledger_correctly_rejected": 46,
+      "false_negatives": 0,
+      "false_positives": 0,
+      "p50_latency_ms": 0.0011,
+      "p95_latency_ms": 0.0035
+    },
+    "paraphrased": {
+      "total": 50,
+      "parse_success": 0,
+      "ledger_committed": 0,
+      "ledger_correctly_rejected": 0,
+      "false_negatives": 0,
+      "false_positives": 0,
+      "p50_latency_ms": 0.0013,
+      "p95_latency_ms": 0.0023
+    }
+  }
+}
