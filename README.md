@@ -211,6 +211,3 @@ cargo run --bin eval
 - **OS**: Windows, macOS, Linux
 - **Dependencies**: serde, serde_json, rustyline, rand, ctrlc (no external model files needed)
 
-## License
-
-MIT
